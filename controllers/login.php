@@ -1,49 +1,42 @@
 <?php
-session_start(); // Inicia la sesión para manejar la autenticación del usuario
+session_start();
+require_once "../config/db.php";
 
-require_once "../config/db.php"; // Incluye la conexión a la base de datos
-
-// Verifica si el formulario ha sido enviado por el método POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = trim($_POST["email"]); // Obtiene el email y elimina espacios en blanco
-    $password = trim($_POST["password"]); // Obtiene la contraseña y elimina espacios en blanco
+    $email = trim($_POST["email"]);
+    $password = trim($_POST["password"]);
 
-    // Prepara la consulta para buscar el usuario en la base de datos
-    $stmt = $conn->prepare("SELECT id_usuario, nombre, rol, password FROM usuario WHERE email = ?");
-    $stmt->bind_param("s", $email); // Asigna el email a la consulta
-    $stmt->execute(); // Ejecuta la consulta
-    $result = $stmt->get_result(); // Obtiene los resultados
+    // Consulta para obtener el usuario
+    $sql = "SELECT * FROM usuario WHERE email = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    // Verifica si el usuario existe en la base de datos
     if ($result->num_rows === 1) {
-        $usuario = $result->fetch_assoc(); // Obtiene los datos del usuario
+        $usuario = $result->fetch_assoc();
 
-        // Verifica si la contraseña ingresada coincide con la almacenada (ajustar si se usa hash)
-        if ($password === $usuario["password"]) { 
-            // Guarda los datos del usuario en la sesión
-            $_SESSION["usuario"] = $usuario["nombre"];
+        // Verificar contraseña (ajustar si usas hash en la BD)
+        if ($password === $usuario["password"]) { // Cambiar a password_verify($password, $usuario["password"]) si está hasheada
+            // Guardar sesión del usuario
+            $_SESSION["usuario"] = $usuario["email"];
             $_SESSION["rol"] = $usuario["rol"];
-            
-            // Redirige al dashboard correspondiente según el rol
+
+            // Redirección según el rol
             if ($usuario["rol"] === "administrador") {
-                header("Location: ../views/admin.php");
+                header("Location: http://localhost/portaldocente2.0/views/admin.php");
+                exit();
             } else {
-                header("Location: ../views/dashboard.php");
+                header("Location: http://localhost/portaldocente2.0/views/dashboard.php");
+                exit();
             }
-            exit();
         } else {
-            // Si la contraseña es incorrecta, redirige al login con un mensaje de error
             header("Location: ../views/login.php?error=Contraseña incorrecta");
             exit();
         }
     } else {
-        // Si el usuario no existe, redirige al login con un mensaje de error
         header("Location: ../views/login.php?error=Usuario no encontrado");
         exit();
     }
-} else {
-    // Si se intenta acceder directamente sin enviar el formulario, redirige al login
-    header("Location: ../views/login.php");
-    exit();
 }
 ?>
