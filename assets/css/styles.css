@@ -1,139 +1,266 @@
-/* Estilos generales */
+/* --------------------  ESTILOS GENERALES -------------------- */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
     background: url('../img/wallpaper_canarias.png') no-repeat center center fixed;
     background-size: cover;
+    margin: 0;
+    padding: 0;
 }
 
-/* Estilos del contenedor de login */
-.login-box {
-    width: 100%;
-    max-width: 400px;
-    background: rgba(255, 255, 255, 0.6); /* Blanco con 60% de opacidad */
-    border-radius: 10px;
+/* --------------------  LOGIN -------------------- */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
     text-align: center;
-    padding: 20px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Estilos del logo de Portal Docente 2.0 */
-.portal-logo {
-    width: 120px;
-    display: block;
-    margin: 0 auto 15px auto;
-}
-
-/* Estilos del logo de Canarias (arriba a la izquierda) */
+/* Logo del Gobierno de Canarias */
 .canarias-logo {
     position: absolute;
     top: 20px;
     left: 20px;
-    width: 100px;
+    width: 80px;
 }
 
-/* Estilos del formulario de login */
-form .form-control {
+/* Cuadro de inicio de sesión */
+.login-box {
+    width: 100%;
+    max-width: 350px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Campos de entrada */
+.form-control {
+    width: 90%;
+    padding: 10px;
+    margin: 8px auto;
+    border: 1px solid #ccc;
     border-radius: 20px;
+    font-size: 14px;
     text-align: center;
-    padding: 12px; /* Ajuste de padding para más comodidad */
-    font-size: 16px;
-    margin-bottom: 20px; /* 📌 Añade espacio entre los campos */
+    display: block;
 }
 
-/* Botón "Iniciar Sesión" */
-form .btn-primary {
+/* Botón de inicio de sesión */
+.btn-primary {
+    width: 90%;
+    padding: 10px;
+    font-size: 14px;
     background-color: #007bff;
     border-radius: 20px;
     font-weight: bold;
-    color: white; /* 📌 Texto en blanco */
-    padding: 12px;
+    color: white;
     border: none;
-    width: 100%;
     cursor: pointer;
+    display: block;
+    margin: 8px auto;
 }
 
-form .btn-primary:hover {
-    background-color: #0056b3; /* Azul más oscuro al pasar el mouse */
+.btn-primary:hover {
+    background-color: #0056b3;
 }
 
-/* Estilo para la casilla "Recuérdame" */
-.remember-me {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 10px 0;
+/* "Recuérdame" y "¿Olvidaste tu contraseña?" */
+.remember-me, .forgot-password {
+    text-align: center;
     font-size: 14px;
 }
 
-.remember-me input {
-    margin-right: 5px;
-}
-
-/* Estilo para "¿Olvidaste tu contraseña?" */
-.forgot-password {
-    margin-top: 10px;
-}
-
-.forgot-password a {
-    font-size: 0.9rem;
-    color: #007bff;
-    text-decoration: none;
-}
-
-.forgot-password a:hover {
-    text-decoration: underline;
-}
-
-/* Estilos de la barra lateral */
-.sidebar {
-    height: 100vh;
+/* --------------------  BARRA SUPERIOR -------------------- */
+.top-bar {
+    width: 100%;
+    height: 50px;
+    background: #f1f1f1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
     position: fixed;
     top: 0;
     left: 0;
-    padding-top: 20px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.sidebar .nav-link {
-    font-size: 1.1rem;
-    padding: 10px 15px;
-    color: #333;
-    transition: background 0.3s;
+/* Logo en la barra superior */
+.logo-canarias {
+    width: 120px;
+    height: auto;
 }
 
-.sidebar .nav-link.active, .sidebar .nav-link:hover {
-    background-color: #007bff;
-    color: white;
+/* Barra de búsqueda */
+.search-container {
+    display: flex;
+    align-items: center;
+}
+
+.search-bar {
+    border-radius: 20px;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    width: 200px;
+    font-size: 14px;
+    outline: none;
+}
+
+.search-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 5px;
+}
+
+/* --------------------  ICONO DE USUARIO -------------------- */
+.user-icon {
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    right: 20px;
+    top: 10px;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+}
+
+.user-icon:hover {
+    transform: scale(1.1);
+}
+
+/* Desplegable */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: white;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    min-width: 150px;
     border-radius: 5px;
 }
 
-/* Estilos del contenido principal */
-main {
-    margin-left: 200px;
+.dropdown-content a {
+    color: black;
+    padding: 10px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #ddd;
+}
+
+/* --------------------  BARRA LATERAL -------------------- */
+.sidebar {
+    width: 220px;
+    height: 100vh;
+    background: #f1f1f1;
+    position: fixed;
+    left: 0;
+    top: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: width 0.3s ease-in-out;
+}
+
+.sidebar-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 25px;
+}
+
+/* Botón de colapsar */
+.toggle-sidebar-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    font-size: 20px;
+    position: fixed;
+    top: 60px;
+    left: 10px;
+    z-index: 1101;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+    padding: 8px 12px;
+    transition: background 0.3s ease-in-out;
+}
+
+.sidebar.collapsed {
+    width: 70px;
+}
+
+.sidebar.collapsed .nav-link span {
+    display: none;
+}
+
+/* --------------------  ICONOS DE LA BARRA LATERAL -------------------- */
+.sidebar-icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+    vertical-align: middle;
+    transition: transform 0.3s ease-in-out;
+}
+
+.sidebar-icon:hover {
+    transform: scale(1.1);
+}
+
+/* Indicador de sección activa */
+.nav-link.active {
+    background-color: rgba(0, 123, 255, 0.2);
+    border-radius: 10px;
+}
+
+/* Enlaces de la barra lateral */
+.sidebar .nav-link {
+    padding: 12px 15px;
+    text-decoration: none;
+    color: black;
+    display: flex;
+    align-items: center;
+    border-radius: 8px;
+    transition: background 0.3s ease-in-out;
+}
+
+.sidebar .nav-link:hover {
+    background: rgba(0, 123, 255, 0.2);
+}
+
+.sidebar .nav-link.active {
+    background: rgba(0, 123, 255, 0.6);
+    font-weight: bold;
+    color: white;
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.2);
+}
+
+/* --------------------  CONTENIDO -------------------- */
+.content {
+    margin-left: 240px;
+    margin-top: 80px;
     padding: 20px;
 }
 
-.card {
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s;
+/* Texto de bienvenida */
+.content h2 {
+    text-align: center;
+    margin-top: 20px;
 }
 
-.card:hover {
-    transform: scale(1.02);
-}
-
-/* Estilos del pie de página */
+/* --------------------  FOOTER -------------------- */
 .footer {
     text-align: center;
     padding: 15px;
-    background-color: #007bff;
-    color: white;
+    background-color: #f1f1f1;
+    color: black;
     position: fixed;
     bottom: 0;
     width: 100%;
