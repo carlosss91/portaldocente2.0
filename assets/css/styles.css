@@ -91,6 +91,42 @@ body {
 .logo-canarias {
     width: 120px;
     height: auto;
+    margin-left: 80px; /* Mueve el logo 100px a la derecha */
+}
+
+
+/* ICONO DE COLAPSAR  */
+
+.toggle-sidebar-btn {
+    background: none; /* Quita el fondo */
+    border: none; /* Elimina bordes */
+    cursor: pointer;
+    position: fixed;
+    left: 20px;
+    top: 10px;
+    z-index: 1101;
+    padding: 0;
+}
+
+/* Ajustamos el tamaño y la animación */
+.toggle-icon {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Efecto hover para hacerlo consistente */
+.toggle-icon:hover {
+    transform: scale(1.1);
+}
+
+.sidebar.collapsed {
+    width: 70px;
+}
+
+.sidebar.collapsed .nav-link span {
+    display: none;
 }
 
 /* Barra de búsqueda */
@@ -116,7 +152,7 @@ body {
     margin-left: 5px;
 }
 
-/* --------------------  ICONO DE USUARIO -------------------- */
+/*   ICONO DE USUARIO  */
 .user-icon {
     width: 40px;
     height: 40px;
@@ -176,32 +212,9 @@ body {
     gap: 25px;
 }
 
-/* Botón de colapsar */
-.toggle-sidebar-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 10px;
-    font-size: 20px;
-    position: fixed;
-    top: 60px;
-    left: 10px;
-    z-index: 1101;
-    background-color: #f1f1f1;
-    border-radius: 5px;
-    padding: 8px 12px;
-    transition: background 0.3s ease-in-out;
-}
 
-.sidebar.collapsed {
-    width: 70px;
-}
 
-.sidebar.collapsed .nav-link span {
-    display: none;
-}
-
-/* --------------------  ICONOS DE LA BARRA LATERAL -------------------- */
+/*   ICONOS DE LA BARRA LATERAL  */
 .sidebar-icon {
     width: 30px;
     height: 30px;
@@ -214,7 +227,7 @@ body {
     transform: scale(1.1);
 }
 
-/* Indicador de sección activa */
+/* 🔹 Resaltado del apartado activo */
 .nav-link.active {
     background-color: rgba(0, 123, 255, 0.2);
     border-radius: 10px;
@@ -249,10 +262,10 @@ body {
     padding: 20px;
 }
 
-/* Texto de bienvenida */
+/* 🔹 Centrar el mensaje de bienvenida */
 .content h2 {
     text-align: center;
-    margin-top: 20px;
+    margin-top: 40px;
 }
 
 /* --------------------  FOOTER -------------------- */

@@ -1,60 +1,66 @@
-// Función para colapsar/expandir la barra lateral
+// ------------------ 🌟 FUNCIONES GENERALES ------------------ 
+
+// 🟢 Alternar colapso de la barra lateral
 function toggleSidebar() {
     document.getElementById("sidebar").classList.toggle("collapsed");
 }
 
-// Función para mostrar el menú desplegable del usuario
+// 🟢 Alternar el menú de usuario
 function toggleUserMenu() {
-    document.getElementById("userDropdown").classList.toggle("show");
+    document.getElementById("userDropdown").classList.toggle("show-dropdown");
 }
 
-// Cierra el menú desplegable si se hace clic fuera
+// 🔵 Cierra el menú desplegable si se hace clic fuera
 window.onclick = function(event) {
     if (!event.target.matches('.user-icon')) {
-        var dropdowns = document.getElementsByClassName("dropdown-content");
-        for (var i = 0; i < dropdowns.length; i++) {
-            var openDropdown = dropdowns[i];
-            if (openDropdown.classList.contains('show')) {
-                openDropdown.classList.remove('show');
+        let dropdowns = document.getElementsByClassName("dropdown-content");
+        for (let i = 0; i < dropdowns.length; i++) {
+            let openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show-dropdown')) {
+                openDropdown.classList.remove('show-dropdown');
             }
         }
     }
 }
 
-//MOVIMIENTO ICONOS
+// ------------------ 📰 DESPLIEGUE DE NOTICIAS ------------------ 
+function toggleNews(id) {
+    document.querySelectorAll(".news-content").forEach(content => {
+        if (content.id !== "news-" + id) {
+            content.classList.remove("show-news");
+        }
+    });
+
+    let content = document.getElementById("news-" + id);
+    content.classList.toggle("show-news");
+}
+
+// ------------------ 🎨 ICONOS DINÁMICOS (GIF) ------------------
 document.addEventListener("DOMContentLoaded", function () {
-    let icons = document.querySelectorAll(".sidebar-icon, .user-icon"); // 🔥 Aplica efecto a ambos tipos de iconos
+    let icons = document.querySelectorAll(".sidebar-icon, .user-icon, .toggle-icon"); 
 
     icons.forEach(function (icon) {
-        // Cambiar a GIF cuando se pasa el ratón
         icon.addEventListener("mouseenter", function () {
-            let staticSrc = icon.src.replace("_static.png", ".gif"); // Reemplaza el nombre del archivo
+            let staticSrc = icon.src.replace("_static.png", ".gif");
             icon.src = staticSrc;
         });
 
-        // Volver a la imagen estática cuando se quita el ratón
         icon.addEventListener("mouseleave", function () {
-            let gifSrc = icon.src.replace(".gif", "_static.png"); // Reemplaza el nombre del archivo
+            let gifSrc = icon.src.replace(".gif", "_static.png");
             icon.src = gifSrc;
         });
     });
 });
 
-
-// Mostrar/ocultar el menú al hacer clic en el icono de usuario
+// ------------------ 🔍 FUNCIÓN DE BÚSQUEDA ------------------
 document.addEventListener("DOMContentLoaded", function () {
-    let userIcon = document.querySelector(".user-icon");
-    let dropdown = document.getElementById("userDropdown");
+    let searchBtn = document.querySelector(".search-btn");
+    let searchInput = document.querySelector(".search-bar");
 
-    userIcon.addEventListener("click", function (event) {
-        dropdown.classList.toggle("show-dropdown");
-        event.stopPropagation(); // Evitar que se cierre inmediatamente
-    });
-
-    // Cerrar el menú si se hace clic fuera de él
-    document.addEventListener("click", function (event) {
-        if (!userIcon.contains(event.target) && !dropdown.contains(event.target)) {
-            dropdown.classList.remove("show-dropdown");
+    searchBtn.addEventListener("click", function () {
+        let query = searchInput.value.toLowerCase();
+        if (query.trim() !== "") {
+            alert("🔍 Buscando: " + query); // 📌 Aquí podríamos implementar búsqueda real
         }
     });
 });
