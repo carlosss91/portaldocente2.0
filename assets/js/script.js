@@ -124,3 +124,46 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
+// ------------------  FORMULARIO ADJUDICACIONES ------------------ 
+
+var municipiosPorIsla = {
+    "Tenerife": ["Adeje", "Arafo", "Arico", "Arona", "Buenavista del Norte", "Candelaria", "El Rosario", "El Sauzal", "El Tanque", "Fasnia", "Garachico", "Granadilla de Abona", "Guía de Isora", "Güímar", "Icod de los Vinos", "La Guancha", "La Matanza de Acentejo", "La Orotava", "La Victoria de Acentejo", "Los Realejos", "Puerto de la Cruz", "San Cristóbal de La Laguna", "San Juan de la Rambla", "San Miguel de Abona", "Santa Cruz de Tenerife", "Santa Úrsula", "Santiago del Teide", "Tacoronte", "Tegueste", "Vilaflor de Chasna"],
+    "Gran Canaria": ["Agaete", "Agüimes", "Artenara", "Arucas", "Firgas", "Gáldar", "Ingenio", "La Aldea de San Nicolás", "Las Palmas de Gran Canaria", "Mogán", "Moya", "San Bartolomé de Tirajana", "Santa Brígida", "Santa Lucía de Tirajana", "Santa María de Guía", "Tejeda", "Telde", "Teror", "Valleseco", "Valsequillo de Gran Canaria", "Vega de San Mateo"],
+    "Lanzarote": ["Arrecife", "Haría", "San Bartolomé", "Teguise", "Tías", "Tinajo", "Yaiza"],
+    "Fuerteventura": ["Antigua", "Betancuria", "La Oliva", "Pájara", "Puerto del Rosario", "Tuineje"],
+    "La Palma": ["Barlovento", "Breña Alta", "Breña Baja", "Fuencaliente", "Garafía", "Los Llanos de Aridane", "El Paso", "Puntagorda", "Puntallana", "San Andrés y Sauces", "Santa Cruz de La Palma", "Tazacorte", "Tijarafe", "Villa de Mazo"],
+    "La Gomera": ["Agulo", "Alajeró", "Hermigua", "San Sebastián de La Gomera", "Valle Gran Rey", "Vallehermoso"],
+    "El Hierro": ["Frontera", "El Pinar de El Hierro", "Valverde"],
+    "La Graciosa": ["Caleta de Sebo"]
+};
+
+// Función para actualizar municipios cuando se seleccione una isla
+function actualizarMunicipios(select, index) {
+    var islaSeleccionada = select.value;
+    var municipioSelect = document.getElementsByName(`adjudicaciones[${index}][municipio]`)[0];
+
+    // Limpiar el select de municipios
+    municipioSelect.innerHTML = '<option value="">Seleccione un municipio</option>';
+
+    // Si la isla tiene municipios, agregarlos al select
+    if (municipiosPorIsla[islaSeleccionada]) {
+        municipiosPorIsla[islaSeleccionada].forEach(municipio => {
+            let option = document.createElement("option");
+            option.value = municipio;
+            option.textContent = municipio;
+            municipioSelect.appendChild(option);
+        });
+    }
+}
+
+function toggleFormulario() {
+    var formulario = document.getElementById("formularioAdjudicacion");
+    if (formulario.style.display === "none" || formulario.style.display === "") {
+        formulario.style.display = "block";
+    } else {
+        formulario.style.display = "none";
+    }
+}
+
+
