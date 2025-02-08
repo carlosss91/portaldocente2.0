@@ -45,13 +45,14 @@ $pagina_activa = basename($_SERVER['PHP_SELF'], ".php");
         </div>
 
         <!-- Icono de usuario -->
-        <div class="user-menu">
+        <div class="user-menu" onclick="toggleUserMenu(event)">
             <img src="../assets/icons/user_static.png" alt="Usuario" class="user-icon">
             <div class="dropdown-content" id="userDropdown">
                 <a href="perfil.php">Mi Perfil</a>
                 <a href="../controllers/logout.php">Cerrar Sesión</a>
             </div>
         </div>
+
     </header>
 
     <!-- Barra lateral con iconos -->
@@ -63,8 +64,8 @@ $pagina_activa = basename($_SERVER['PHP_SELF'], ".php");
             <a href="noticias.php" class="nav-link <?php echo ($pagina_activa == 'noticias') ? 'active' : ''; ?>">
                 <img src="../assets/icons/news_static.png" alt="Noticias" class="sidebar-icon"> <span>Noticias</span>
             </a>
-            <a href="ambito.php" class="nav-link <?php echo ($pagina_activa == 'ambito') ? 'active' : ''; ?>">
-                <img src="../assets/icons/island_static.png" alt="Ámbito" class="sidebar-icon"> <span>Ámbito</span>
+            <a href="adjudicaciones.php" class="nav-link <?php echo ($pagina_activa == 'Adjudicaciones') ? 'active' : ''; ?>">
+                <img src="../assets/icons/island_static.png" alt="Adjudicaciones" class="sidebar-icon"> <span>Adjudicaciones</span>
             </a>
             <a href="solicitudes.php" class="nav-link <?php echo ($pagina_activa == 'solicitudes') ? 'active' : ''; ?>">
                 <img src="../assets/icons/request_static.png" alt="Solicitudes" class="sidebar-icon"> <span>Solicitudes</span>
@@ -79,6 +80,15 @@ $pagina_activa = basename($_SERVER['PHP_SELF'], ".php");
     <main class="content">
         <h2 class="welcome-text">¡Bienvenido, <?php echo htmlspecialchars($_SESSION["usuario"]); ?>!</h2>
     </main>
+
+    <!-- Pie de página -->
+<footer class="footer">
+    <div class="footer-left">© 2025 Gobierno de Canarias - Consejería de Educación</div>
+    <div class="footer-right">
+        <a href="#">Sobre Nosotros</a>
+        <a href="#">Aviso Legal</a>
+    </div>
+</footer>
 
 </body>
 </html>

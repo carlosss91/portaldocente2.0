@@ -1,23 +1,23 @@
 <?php
 session_start();
-require_once "../config/db.php";
+require_once "../config/db.php"; // Conexión a la base de datos
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST["email"]);
     $password = trim($_POST["password"]);
 
+    // 🔹 Establecer la conexión correctamente
+    $pdo = Database::conectar(); 
+
     // Consulta para obtener el usuario
     $sql = "SELECT * FROM usuario WHERE email = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $stmt = $pdo->prepare($sql); // ✅ Usamos $pdo en vez de $conn
+    $stmt->execute([$email]);
+    $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($result->num_rows === 1) {
-        $usuario = $result->fetch_assoc();
-
-        // Verificar contraseña (ajustar si usas hash en la BD)
-        if ($password === $usuario["password"]) { // Cambiar a password_verify($password, $usuario["password"]) si está hasheada
+    if ($usuario) {
+        // 🔹 Verificar la contraseña (Si está hasheada, usa password_verify)
+        if ($password === $usuario["password"]) { // ⚠️ Si usas hash, cambia esto a `password_verify($password, $usuario["password"])`
             // Guardar sesión del usuario
             $_SESSION["usuario"] = $usuario["email"];
             $_SESSION["rol"] = $usuario["rol"];

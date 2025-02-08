@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión - Portal Docente</title>
     <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="../assets/js/script.js" defer></script> <!-- Se añade script.js -->
 </head>
 <body class="login-container">
 
-    <!-- Logo del Gobierno de Canarias (Pequeño y arriba a la izquierda) -->
+    <!-- Logo del Gobierno de Canarias -->
     <img src="../assets/img/logo_canarias.png" alt="Gobierno de Canarias" class="canarias-logo">
 
     <div class="login-box">
@@ -19,11 +20,9 @@
 
         <!-- Formulario de inicio de sesión -->
         <form action="../controllers/login.php" method="POST">
-            <!-- Campo Usuario -->
             <div class="form-group">
                 <input class="form-control" type="email" name="email" placeholder="Correo electrónico" required>
             </div>
-            <!-- Campo Contraseña -->
             <div class="form-group">
                 <input class="form-control" type="password" name="password" placeholder="Contraseña" required>
             </div>
@@ -41,9 +40,16 @@
             <div class="forgot-password">
                 <a href="#">¿Has olvidado tu contraseña?</a>
             </div>
+
+            <!-- Botón de Cl@ve -->
+            <div class="clave-container">
+                <button type="button" class="clave-btn" onclick="mostrarMensajeClave()">
+                    <img src="../assets/icons/clave.png" alt="Acceder con Cl@ve">
+                </button>
+            </div>
         </form>
 
-        <!-- Mostrar mensaje de error si la autenticación falla -->
+        <!-- Mensaje de error si falla el inicio de sesión -->
         <?php
         if (isset($_GET["error"])) {
             echo "<p class='error'>" . htmlspecialchars($_GET["error"]) . "</p>";
@@ -51,7 +57,15 @@
         ?>
     </div>
 
+
+<!-- Pie de página -->
+<footer class="footer">
+    <div class="footer-left">© 2025 Gobierno de Canarias - Consejería de Educación</div>
+    <div class="footer-right">
+        <a href="#">Sobre Nosotros</a>
+        <a href="#">Aviso Legal</a>
+    </div>
+</footer>
+
 </body>
 </html>
-
-

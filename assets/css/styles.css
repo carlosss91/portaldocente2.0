@@ -34,6 +34,14 @@ body {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
+/* Logo Portal Docente 2.0 */
+.portal-logo {
+    width: 120px; /* Ajusta el tamaño */
+    max-width: 100%; /* Evita que se agrande demasiado */
+    display: block;
+    margin: 0 auto 15px auto;
+}
+
 /* Campos de entrada */
 .form-control {
     width: 90%;
@@ -94,9 +102,7 @@ body {
     margin-left: 80px; /* Mueve el logo 100px a la derecha */
 }
 
-
-/* ICONO DE COLAPSAR  */
-
+/* ICONO DE COLAPSAR */
 .toggle-sidebar-btn {
     background: none; /* Quita el fondo */
     border: none; /* Elimina bordes */
@@ -152,42 +158,63 @@ body {
     margin-left: 5px;
 }
 
-/*   ICONO DE USUARIO  */
+
+/* --------------------  BOTÓN USUARIO -------------------- */
+/* ✅ Contenedor del usuario */
+.user-menu {
+    position: relative; /* 📌 Permite que el menú se posicione en relación a este */
+    display: flex; /* 📌 Flexbox para alinear correctamente el icono */
+    align-items: center; /* 📌 Centra el icono verticalmente */
+}
+
+/* ✅ Estilo del icono de usuario */
 .user-icon {
     width: 40px;
     height: 40px;
-    position: absolute;
-    right: 20px;
-    top: 10px;
     cursor: pointer;
     transition: transform 0.3s ease-in-out;
 }
 
+/* ✅ Efecto hover para agrandar ligeramente el icono */
 .user-icon:hover {
     transform: scale(1.1);
 }
 
-/* Desplegable */
-.dropdown-content {
-    display: none;
+/* ✅ Ajuste del menú desplegable */
+#userDropdown {
+    display: none; /* 📌 Se oculta por defecto */
     position: absolute;
     right: 0;
+    top: 100%; /* 📌 Se despliega justo debajo del icono */
     background-color: white;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    min-width: 150px;
-    border-radius: 5px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* 📌 Sombra suave para destacar */
+    min-width: 180px; /* 📌 Ancho del menú */
+    border-radius: 5px; /* 📌 Bordes redondeados */
+    padding: 10px 0;
+    z-index: 2000; /* 📌 Asegura que se superpone a otros elementos */
+    text-align: left;
 }
 
-.dropdown-content a {
+/* ✅ Estilo de los enlaces dentro del menú */
+#userDropdown a {
     color: black;
-    padding: 10px;
+    padding: 10px 15px;
     text-decoration: none;
+    display: block;
+    font-size: 14px;
+    transition: background 0.3s ease-in-out;
+}
+
+/* ✅ Efecto hover en los enlaces */
+#userDropdown a:hover {
+    background-color: #f1f1f1;
+}
+
+/* ✅ Mostrar el menú cuando tiene la clase activa */
+#userDropdown.show-dropdown {
     display: block;
 }
 
-.dropdown-content a:hover {
-    background-color: #ddd;
-}
 
 /* --------------------  BARRA LATERAL -------------------- */
 .sidebar {
@@ -212,9 +239,7 @@ body {
     gap: 25px;
 }
 
-
-
-/*   ICONOS DE LA BARRA LATERAL  */
+/* ICONOS DE LA BARRA LATERAL */
 .sidebar-icon {
     width: 30px;
     height: 30px;
@@ -227,7 +252,7 @@ body {
     transform: scale(1.1);
 }
 
-/* 🔹 Resaltado del apartado activo */
+/* Resaltado del apartado activo */
 .nav-link.active {
     background-color: rgba(0, 123, 255, 0.2);
     border-radius: 10px;
@@ -262,7 +287,7 @@ body {
     padding: 20px;
 }
 
-/* 🔹 Centrar el mensaje de bienvenida */
+/* Centrar el mensaje de bienvenida */
 .content h2 {
     text-align: center;
     margin-top: 40px;
@@ -270,11 +295,54 @@ body {
 
 /* --------------------  FOOTER -------------------- */
 .footer {
-    text-align: center;
-    padding: 15px;
     background-color: #f1f1f1;
     color: black;
+    padding: 10px 40px; /* Espaciado arriba/abajo y más separación lateral */
     position: fixed;
     bottom: 0;
     width: 100%;
+    display: flex;
+    justify-content: space-between; /* Separa los elementos a los lados */
+    align-items: center;
+}
+
+/* Asegurar que el texto no quede pegado al borde */
+.footer-left {
+    margin-left: 20px;
+}
+
+.footer-right {
+    margin-right: 20px;
+}
+
+/* Separación entre los enlaces */
+.footer a {
+    color: black;
+    text-decoration: none;
+    margin-left: 15px;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+/* -------------------- BOTÓN CL@VE -------------------- */
+.clave-container {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.clave-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.clave-btn img {
+    width: 150px; /* Ajusta el tamaño */
+    transition: transform 0.3s ease-in-out;
+}
+
+.clave-btn:hover img {
+    transform: scale(1.05);
 }

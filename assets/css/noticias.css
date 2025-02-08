@@ -1,54 +1,125 @@
 /* Contenedor de noticias */
 .news-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-    margin-top: 20px;
+    display: flex; /* Usar flexbox layout */
+    flex-wrap: wrap; /* Permitir que las tarjetas se envuelvan */
+    gap: 20px; /* Espacio entre tarjetas */
+    margin-top: 20px; /* Margen superior */
+    margin-bottom: 40px; /* Espacio adicional para el footer */
+    justify-content: center; /* Centrar las tarjetas horizontalmente */
 }
 
-/* Tarjeta de noticias */
+/* Tarjeta de cada noticia */
 .news-card {
-    position: relative;
-    border-radius: 10px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: transform 0.3s ease-in-out;
+    position: relative; /* Posicionamiento relativo para elementos internos */
+    border-radius: 10px; /* Bordes redondeados */
+    overflow: hidden; /* Ocultar desbordamiento */
+    cursor: pointer; /* Cambiar cursor al pasar */
+    transition: transform 0.3s ease-in-out; /* Transición suave al transformar */
+    background: #ffffff; /* Fondo blanco */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+    width: 400px; /* Ancho fijo */
+    margin: 0 auto; /* Centrar horizontalmente */
+}
+/* Imagen de la tarjeta de noticia */
+.news-card-img {
+    width: 100%; /* Ancho completo */
+    height: auto; /* Altura automática */
+    object-fit: cover; /* Ajustar la imagen para cubrir el contenedor */
 }
 
+/* Desactivar hover solo en la noticia expandida */
 .news-card:hover {
-    transform: scale(1.05);
+    transform: scale(1.05); /* Aumentar tamaño al pasar */
 }
 
-/* Imagen de noticia */
-.news-card img {
-    width: 100%;
-    height: auto;
-    display: block;
+.news-card.expanded-news:hover {
+    transform: none; /* No transformar si está expandida */
+    cursor: default; /* Cambiar cursor para indicar que no es interactivo */
 }
 
-/* Capa de superposición */
-.news-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    color: white;
-    padding: 10px;
-    text-align: center;
-    font-weight: bold;
+/* Contenedor de la imagen y el título */
+.news-image-container {
+    position: relative; /* Posicionamiento relativo para el título */
+    overflow: hidden; /* Ocultar desbordamiento */
+    border-top-left-radius: 10px; /* Bordes superiores redondeados */
+    border-top-right-radius: 10px; /* Bordes superiores redondeados */
+}
+
+/* Imagen de la noticia */
+.news-image-container img {
+    width: 100%; /* Ancho completo */
+    height: 100%; /* Altura completa */
+    object-fit: cover; /* Ajustar la imagen para cubrir el contenedor */
+}
+
+/* Mantener el título fijo sobre la imagen */
+.news-title {
+    position: absolute; /* Posicionamiento absoluto sobre la imagen */
+    bottom: 0; /* Alinear al fondo */
+    left: 0; /* Alinear a la izquierda */
+    width: 100%; /* Ancho completo */
+    background: rgba(34, 34, 34, 0.85); /* Fondo gris oscuro con opacidad */
+    color: #ffffff; /* Texto blanco */
+    padding: 12px; /* Relleno interno */
+    text-align: center; /* Centrar texto */
+    font-weight: bold; /* Texto en negrita */
+    font-size: 18px; /* Tamaño de fuente */
+    border-bottom-left-radius: 10px; /* Bordes inferiores redondeados */
+    border-bottom-right-radius: 10px; /* Bordes inferiores redondeados */
+    display: flex; /* Usar flexbox */
+    align-items: center; /* Centrar verticalmente */
+    justify-content: center; /* Centrar horizontalmente */
+    min-height: 50px; /* Altura mínima */
+    font-family: Arial, sans-serif; /* Fuente */
+    z-index: 10; /* Asegurar que esté sobre la imagen */
 }
 
 /* Contenido de la noticia (oculto inicialmente) */
 .news-content {
-    display: none;
-    padding: 15px;
-    background: #f9f9f9;
-    border-radius: 10px;
-    margin-top: 10px;
+    display: none; /* Ocultar por defecto */
+    padding: 15px; /* Relleno interno */
+    background: #ffffff; /* Fondo blanco */
+    border-radius: 10px; /* Bordes redondeados */
+    margin-top: 10px; /* Margen superior */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+    transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out; /* Transiciones suaves */
+    max-height: 0; /* Altura máxima inicial */
+    overflow: hidden; /* Ocultar desbordamiento */
+    font-size: 16px; /* Tamaño de fuente */
+    font-family: Arial, sans-serif; /* Fuente */
+    line-height: 1.5; /* Altura de línea */
+    opacity: 0; /* Inicialmente invisible */
 }
 
-/* Mostrar contenido al hacer clic */
+/* Expandir solo la noticia activa */
 .show-news {
-    display: block;
+    display: block; /* Mostrar contenido */
+    max-height: 400px; /* Altura máxima */
+    opacity: 1; /* Hacer visible */
+    overflow: auto; /* Permitir scroll si es necesario */
+}
+
+/* Asegurar que solo la tarjeta seleccionada se expanda */
+.news-card.expanded-news {
+    transform: none; /* No transformar */
+    cursor: default; /* Cambiar cursor */
+}
+
+/* Evitar que las tarjetas no seleccionadas se vean afectadas */
+.news-card:not(.expanded-news):hover {
+    transform: scale(1.05); /* Aumentar tamaño al pasar */
+}
+
+/* Mejor alineación del autor y la fecha */
+.news-content small {
+    display: block; /* Mostrar como bloque */
+    text-align: right; /* Alinear a la derecha */
+    color: #555; /* Color gris */
+    font-size: 14px; /* Tamaño de fuente */
+    margin-top: 10px; /* Margen superior */
+}
+
+/* Ajuste de margen para el contenido desplegado */
+.news-content p {
+    margin-bottom: 10px; /* Margen inferior */
 }
