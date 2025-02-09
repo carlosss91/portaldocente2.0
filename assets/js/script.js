@@ -273,3 +273,20 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
+// Función para mostrar/ocultar el formulario de Noticias
+    document.addEventListener("DOMContentLoaded", function () {
+        const btnNuevaNoticia = document.getElementById("btnNuevaNoticia");
+        const formularioNoticia = document.getElementById("formularioNoticia");
+        const btnCancelar = document.getElementById("btnCancelar");
+
+        btnNuevaNoticia.addEventListener("click", function () {
+            formularioNoticia.style.display = "block";
+            btnNuevaNoticia.style.display = "none"; // Oculta el botón de "Nueva Noticia"
+        });
+
+        btnCancelar.addEventListener("click", function () {
+            formularioNoticia.style.display = "none";
+            btnNuevaNoticia.style.display = "inline-block"; // Muestra el botón de "Nueva Noticia"
+        });
+    });
+

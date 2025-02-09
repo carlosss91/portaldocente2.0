@@ -206,51 +206,64 @@ $solicitudes = $solicitudModel->obtenerTodasSolicitudes();
         </section>
 
         <!-- Sección de Noticias -->
-        <section>
-            <h3>Noticias</h3>
-            <button class="btn btn-primary">Nueva Noticia</button>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Título</th>
-                        <th>Contenido</th>
-                        <th>Imagen</th>
-                        <th>Fecha</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($noticias as $noticia): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($noticia['titulo']); ?></td>
-                        <td><?= htmlspecialchars(substr($noticia['contenido'], 0, 100)) . '...'; ?></td>
-                        <td><?= basename($noticia['imagen_url']); ?></td>
-                        <td><?= htmlspecialchars($noticia['fecha']); ?></td>
-                        <td>
-                            <button class="btn btn-light border"><img src="../assets/icons/editar.png" alt="Editar" width="20"></button>
-                            <button class="btn btn-light border"><img src="../assets/icons/eliminar.png" alt="Eliminar" width="20"></button>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-            
-            <!-- Formulario para agregar una nueva noticia (inicialmente oculto) -->
-            <div id="formularioNoticia" style="display: none; margin-top: 15px;">
-                <form action="../controllers/NoticiaController.php" method="POST">
-                    <label for="titulo">Título:</label>
-                    <input type="text" name="titulo" class="form-control" required>
+<section>
+    <h3>Noticias</h3>
+    <button id="btnNuevaNoticia" class="btn btn-primary">Nueva Noticia</button>
 
-                    <label for="contenido">Contenido:</label>
-                    <textarea name="contenido" class="form-control" required></textarea>
+    <!-- Formulario para agregar una nueva noticia (inicialmente oculto) -->
+    <div id="formularioNoticia" style="display: none; margin-top: 15px;">
+        <form action="../controllers/NoticiaController.php" method="POST">
+            <input type="hidden" name="accion" value="agregar">
+            <input type="hidden" name="autor_id" value="<?= $_SESSION['id_usuario']; ?>">
 
-                    <label for="imagen">URL de Imagen:</label>
-                    <input type="text" name="imagen_url" class="form-control">
+            <label for="titulo">Título:</label>
+            <input type="text" name="titulo" class="form-control" required>
 
-                    <button type="submit" class="btn btn-success">Guardar</button>
+            <label for="contenido">Contenido:</label>
+            <textarea name="contenido" class="form-control" required></textarea>
+
+            <label for="imagen">URL de Imagen:</label>
+            <input type="text" name="imagen_url" class="form-control">
+
+            <button type="submit" class="btn btn-success">Guardar</button>
+            <button type="button" id="btnCancelar" class="btn btn-secondary">Cancelar</button>
+        </form>
+    </div>
+
+    <!-- Tabla con la lista de noticias -->
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Contenido</th>
+                <th>Imagen</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($noticias as $noticia): ?>
+            <tr>
+                <td><?= htmlspecialchars($noticia['titulo']); ?></td>
+                <td><?= htmlspecialchars(substr($noticia['contenido'], 0, 100)) . '...'; ?></td>
+                <td><?= basename($noticia['imagen_url']); ?></td>
+                <td><?= htmlspecialchars($noticia['fecha']); ?></td>
+                <td>
+                <form action="../controllers/NoticiaController.php" method="POST" style="display:inline;">
+                    <input type="hidden" name="accion" value="eliminar">
+                    <input type="hidden" name="id_noticia" value="<?= $noticia['id_noticia']; ?>">
+                    <button type="submit" class="btn btn-light border" onclick="return confirm('¿Seguro que deseas eliminar esta noticia?');">
+                        <img src="../assets/icons/eliminar.png" alt="Eliminar" width="20">
+                    </button>
                 </form>
-            </div>
-        </section>
+
+                </td>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</section>
+
 
         <!-- Sección de Adjudicaciones -->
         <section>
