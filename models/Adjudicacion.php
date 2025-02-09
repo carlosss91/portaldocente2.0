@@ -16,6 +16,26 @@ class Adjudicacion {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Obtener todas las adjudicaciones
+    public function obtenerTodasAdjudicaciones() {
+        $sql = "SELECT 
+                    a.id_adjudicacion, 
+                    a.id_usuario, 
+                    u.nombre AS nombre_usuario, 
+                    u.apellido AS apellido_usuario, 
+                    a.isla, 
+                    a.municipio, 
+                    a.fecha_adjudicacion 
+                FROM adjudicacion a
+                JOIN usuario u ON a.id_usuario = u.id_usuario
+                ORDER BY a.fecha_adjudicacion DESC"; // Ordenado por fecha más reciente
+    
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }    
+    
+
     // Agregar una nueva adjudicación con isla y municipio
     public function agregarAdjudicacion($id_usuario, $isla, $municipio) {
         $sql = "INSERT INTO adjudicacion (id_usuario, isla, municipio, fecha_adjudicacion) 

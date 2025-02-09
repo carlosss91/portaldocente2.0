@@ -11,11 +11,12 @@ class Usuario {
 
     // Obtener todos los usuarios (solo datos esenciales)
     public function obtenerUsuarios() {
-        $sql = "SELECT id_usuario, nombre, apellido, email FROM usuario";
+        $sql = "SELECT id_usuario, nombre, apellido, email, disponibilidad, isla, puntuacion FROM usuario"; 
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
 
     // Obtener un usuario por su ID con todos los datos relevantes
     public function obtenerUsuarioPorId($id) {
@@ -27,6 +28,25 @@ class Usuario {
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    //Calcular la posición de un usuario en la lista de puntuaciones
+    public function obtenerPuestoEnLista($id_usuario) {
+        // Consulta para obtener los usuarios ordenados por puntuación DESCENDENTE
+        $sql = "SELECT id_usuario FROM usuario ORDER BY puntuacion DESC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+        // Buscar el puesto del usuario en la lista
+        foreach ($usuarios as $index => $usuario) {
+            if ($usuario['id_usuario'] == $id_usuario) {
+                return $index + 1; // Retorna la posición en la lista (empezando desde 1)
+            }
+        }
+    
+        return "No encontrado"; // Si por alguna razón no se encuentra en la lista
+    }
+    
 
     // Actualizar datos del usuario (excepto la contraseña)
     public function actualizarUsuario($id_usuario, $nombre, $apellido, $email, $telefono, $disponibilidad, $isla, $password = null) {

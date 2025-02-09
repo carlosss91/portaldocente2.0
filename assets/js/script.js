@@ -240,4 +240,36 @@ function togglePassword(inputId, iconId) {
     }
 }
 
+// ------------------PANEL DE ADMINISTRACIÓN------------------
+
+// Función para mostrar/ocultar el formulario de usuarios
+document.addEventListener("DOMContentLoaded", function () {
+    // Obtener los botones y formularios por ID
+    const btnNuevoUsuario = document.getElementById("btnNuevoUsuario");
+    const btnNuevaNoticia = document.getElementById("btnNuevaNoticia");
+    const formularioUsuario = document.getElementById("formularioUsuario");
+    const formularioNoticia = document.getElementById("formularioNoticia");
+
+    // Función para alternar la visibilidad de un formulario
+    function toggleFormulario(formulario) {
+        if (formulario.style.display === "none" || formulario.style.display === "") {
+            formulario.style.display = "block";
+        } else {
+            formulario.style.display = "none";
+        }
+    }
+
+    // Verificar que los botones existen antes de asignar eventos
+    if (btnNuevoUsuario) {
+        btnNuevoUsuario.addEventListener("click", function () {
+            toggleFormulario(formularioUsuario);
+        });
+    }
+
+    if (btnNuevaNoticia) {
+        btnNuevaNoticia.addEventListener("click", function () {
+            toggleFormulario(formularioNoticia);
+        });
+    }
+});
 

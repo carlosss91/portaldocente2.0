@@ -1,9 +1,20 @@
 <?php
 session_start();
+require_once '../models/Usuario.php';
+
+// Verificar que el usuario haya iniciado sesión y tenga el rol adecuado
 if (!isset($_SESSION["usuario"]) || $_SESSION["rol"] !== "docente") {
-    header("Location: login.php");
+    header("Location: login.php"); // Redirige al login si el usuario no está autenticado
     exit();
 }
+
+// Obtener la información del usuario
+$usuarioModel = new Usuario();
+$id_usuario = $_SESSION["id_usuario"];
+$usuario = $usuarioModel->obtenerUsuarioPorId($id_usuario);
+
+// Obtener el puesto en la lista basado en la puntuación
+$puesto_lista = $usuarioModel->obtenerPuestoEnLista($id_usuario);
 
 // Detectar la página activa para resaltar el apartado correspondiente
 $pagina_activa = basename($_SERVER['PHP_SELF'], ".php");
@@ -31,7 +42,6 @@ $pagina_activa = basename($_SERVER['PHP_SELF'], ".php");
             <img id="collapse-icon" src="../assets/icons/menu_static.png" alt="Colapsar" class="toggle-icon sidebar-icon">
         </button>
 
-
         <!-- Logo Gobierno de Canarias -->
         <img src="../assets/img/logo_canarias.png" alt="Gobierno de Canarias" class="logo-canarias">
         
@@ -39,9 +49,8 @@ $pagina_activa = basename($_SERVER['PHP_SELF'], ".php");
         <div class="search-container">
             <input type="text" placeholder="Buscar..." class="search-bar">
             <button class="search-btn">
-                <i class="fas fa-search">
-                <img src="../assets/icons/search_static.png" alt="Inicio" class="sidebar-icon">
-            </i></button>
+                <img src="../assets/icons/search_static.png" alt="Buscar" class="sidebar-icon">
+            </button>
         </div>
 
         <!-- Icono de usuario -->
@@ -52,7 +61,6 @@ $pagina_activa = basename($_SERVER['PHP_SELF'], ".php");
                 <a href="../controllers/logout.php">Cerrar Sesión</a>
             </div>
         </div>
-
     </header>
 
     <!-- Barra lateral con iconos -->
@@ -64,7 +72,7 @@ $pagina_activa = basename($_SERVER['PHP_SELF'], ".php");
             <a href="noticias.php" class="nav-link <?php echo ($pagina_activa == 'noticias') ? 'active' : ''; ?>">
                 <img src="../assets/icons/news_static.png" alt="Noticias" class="sidebar-icon"> <span>Noticias</span>
             </a>
-            <a href="adjudicaciones.php" class="nav-link <?php echo ($pagina_activa == 'Adjudicaciones') ? 'active' : ''; ?>">
+            <a href="adjudicaciones.php" class="nav-link <?php echo ($pagina_activa == 'adjudicaciones') ? 'active' : ''; ?>">
                 <img src="../assets/icons/island_static.png" alt="Adjudicaciones" class="sidebar-icon"> <span>Adjudicaciones</span>
             </a>
             <a href="solicitudes.php" class="nav-link <?php echo ($pagina_activa == 'solicitudes') ? 'active' : ''; ?>">
@@ -78,17 +86,36 @@ $pagina_activa = basename($_SERVER['PHP_SELF'], ".php");
 
     <!-- Contenido dinámico -->
     <main class="content">
-        <h2 class="welcome-text">¡Bienvenido, <?php echo htmlspecialchars($_SESSION["usuario"]); ?>!</h2>
+        <h2 class="welcome-text">¡Bienvenid@, <?= htmlspecialchars($usuario['nombre'] . ' ' . $usuario['apellido']); ?>!</h2>
+        
+        <!-- Tabla con la información del usuario -->
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Disponibilidad</th>
+                    <th>Isla</th>
+                    <th>Puntuación</th>
+                    <th>Puesto en Lista</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><?= $usuario['disponibilidad'] ? 'Disponible' : 'No Disponible'; ?></td>
+                    <td><?= htmlspecialchars($usuario['isla']); ?></td>
+                    <td><?= htmlspecialchars($usuario['puntuacion']); ?></td>
+                    <td><?= $puesto_lista; ?></td>
+                </tr>
+            </tbody>
+        </table>
     </main>
 
     <!-- Pie de página -->
-<footer class="footer">
-    <div class="footer-left">© 2025 Gobierno de Canarias - Consejería de Educación</div>
-    <div class="footer-right">
-        <a href="#">Sobre Nosotros</a>
-        <a href="#">Aviso Legal</a>
-    </div>
-</footer>
-
+    <footer class="footer">
+        <div class="footer-left">© 2025 Gobierno de Canarias - Consejería de Educación</div>
+        <div class="footer-right">
+            <a href="#">Sobre Nosotros</a>
+            <a href="#">Aviso Legal</a>
+        </div>
+    </footer>
 </body>
 </html>

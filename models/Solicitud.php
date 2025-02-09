@@ -16,6 +16,26 @@ class Solicitud {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Obtener todas las solicitudes de todos los usuarios
+    public function obtenerTodasSolicitudes() {
+        $sql = "SELECT 
+                    s.id_solicitud, 
+                    s.id_usuario, 
+                    u.nombre AS nombre_usuario, 
+                    u.apellido AS apellido_usuario, 
+                    s.tipo_solicitud, 
+                    s.estado_solicitud, 
+                    s.detalles_destino_solicitado, 
+                    s.fecha_solicitud 
+                FROM solicitud s
+                JOIN usuario u ON s.id_usuario = u.id_usuario
+                ORDER BY s.fecha_solicitud DESC"; // Ordenado por fecha más reciente
+    
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
     // Agregar una nueva solicitud
     public function agregarSolicitud($id_usuario, $tipo_solicitud, $detalles_destino) {
         $sql = "INSERT INTO solicitud (id_usuario, tipo_solicitud, detalles_destino_solicitado) 
