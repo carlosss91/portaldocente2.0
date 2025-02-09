@@ -48,7 +48,7 @@ $pagina_activa = basename($_SERVER['PHP_SELF'], ".php");
         <div class="user-menu" onclick="toggleUserMenu(event)">
             <img src="../assets/icons/user_static.png" alt="Usuario" class="user-icon">
             <div class="dropdown-content" id="userDropdown">
-                <a href="perfil.php">Mi Perfil</a>
+                <a href="usuario.php">Mi Perfil</a>
                 <a href="../controllers/logout.php">Cerrar Sesión</a>
             </div>
         </div>

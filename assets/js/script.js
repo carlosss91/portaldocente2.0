@@ -222,3 +222,22 @@ function eliminarSolicitud(btn) {
         form.submit(); // Enviar el formulario automáticamente
     }
 }
+
+// ------------------  FORMULARIO USUARIOS ------------------
+
+
+// Función para mostrar/ocultar la contraseña
+function togglePassword(inputId, iconId) {
+    var passwordInput = document.getElementById(inputId);
+    var eyeIcon = document.getElementById(iconId);
+
+    if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        eyeIcon.src = "../assets/icons/eye_open.png"; // Cambia al icono de ojo abierto
+    } else {
+        passwordInput.type = "password";
+        eyeIcon.src = "../assets/icons/eye_closed.png"; // Vuelve al icono de ojo cerrado
+    }
+}
+
+

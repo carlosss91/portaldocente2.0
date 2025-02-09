@@ -1,0 +1,56 @@
+/* Contenedor del perfil */
+.perfil-container {
+    max-width: 500px; /* Define un ancho máximo para mantenerlo centrado */
+    margin: 20px auto; /* Centra el formulario en la página */
+    padding: 20px; /* Añade espacio interno */
+    border: 1px solid #ccc; /* Agrega un borde sutil */
+    border-radius: 5px; /* Bordes redondeados */
+    background: #f8f9fa; /* Color de fondo suave */
+}
+
+/* Estilos de las etiquetas */
+.perfil-container label {
+    font-weight: bold; /* Resalta el texto */
+    margin-top: 10px; /* Espaciado superior para mejor separación */
+    display: block; /* Hace que las etiquetas ocupen toda la línea */
+}
+
+/* Estilos de los campos de entrada */
+.perfil-container input {
+    width: 100%; /* Ocupa todo el ancho disponible */
+    padding: 8px; /* Añade espacio interno para mejor visibilidad */
+    margin-top: 5px; /* Espacio entre el campo y la etiqueta */
+    border: 1px solid #ddd; /* Borde sutil para diferenciar el campo */
+    border-radius: 5px; /* Bordes redondeados */
+}
+
+/* Contenedor del campo de contraseña */
+.password-container {
+    display: flex; /* Permite alinear el campo de entrada y el botón en una fila */
+    align-items: center; /* Alinea verticalmente los elementos */
+    position: relative; /* Permite posicionar el botón dentro del contenedor */
+}
+
+/* Ajusta el tamaño del input dentro del contenedor de contraseña */
+.password-container input {
+    flex: 1; /* Ocupa todo el espacio disponible */
+}
+
+
+/* Botón para mostrar/ocultar contraseña */
+.toggle-password {
+    background: none; /* Elimina el fondo predeterminado */
+    border: none; /* Elimina el borde */
+    cursor: pointer; /* Cambia el cursor a puntero al pasar el ratón */
+    padding: 5px; /* Espaciado para mejorar la interacción */
+    position: absolute; /* Permite colocarlo dentro del contenedor */
+    right: 10px; /* Alinea el botón a la derecha del campo */
+    width: 30px; /* Ajusta el ancho del botón */
+    height: 30px; /* Ajusta la altura del botón */
+}
+
+/* Ajuste del tamaño del icono dentro del botón */
+.toggle-password img {
+    width: 20px; /* Define el tamaño del icono del ojo */
+    height: 20px;
+}
