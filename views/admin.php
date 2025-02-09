@@ -81,80 +81,86 @@ $solicitudes = $solicitudModel->obtenerTodasSolicitudes();
             <button class="btn btn-secondary">Ordenar por Puntuación</button>
             <button class="btn btn-secondary">Ordenar por Fecha de Creación</button>
 
-                 <!-- Formulario para agregar un nuevo usuario (oculto) -->
-                 <div id="formularioUsuario" style="display: none; margin-top: 15px;">
-    <form action="../controllers/UsuarioController.php" method="POST">
-        <div class="form-group">
-            <label for="nombre">Nombre:</label>
-            <input type="text" name="nombre" class="form-control form-control-sm" required>
-        </div>
+         <!-- Formulario para agregar un nuevo usuario (oculto) -->
+            <div id="formularioUsuario" style="display: none; margin-top: 15px;">
+                <form action="../controllers/UsuarioController.php" method="POST">
+                <input type="hidden" name="action" value="crear"> <!-- 🔹 Agregar esta línea -->
+                    <div class="form-group">
+                        <label for="nombre">Nombre:</label>
+                        <input type="text" name="nombre" class="form-control form-control-sm" required>
+                    </div>
 
-        <div class="form-group">
-            <label for="apellido">Apellido:</label>
-            <input type="text" name="apellido" class="form-control form-control-sm" required>
-        </div>
+                    <div class="form-group">
+                        <label for="apellido">Apellido:</label>
+                        <input type="text" name="apellido" class="form-control form-control-sm" required>
+                    </div>
+                    <label for="dni">DNI:</label>
+                    <input type="text" name="dni" class="form-control form-control-sm" required>
 
-        <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" name="email" class="form-control form-control-sm" required>
-        </div>
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" name="email" class="form-control form-control-sm" required>
+                    </div>
 
-        <div class="form-group">
-            <label for="telefono">Teléfono:</label>
-            <input type="text" name="telefono" class="form-control form-control-sm" required>
-        </div>
+                    <div class="form-group">
+                        <label for="telefono">Teléfono:</label>
+                        <input type="text" name="telefono" class="form-control form-control-sm" required>
+                    </div>
 
-        <div class="form-group">
-            <label for="password">Contraseña:</label>
-            <input type="password" name="password" class="form-control form-control-sm" required>
-        </div>
+                    <div class="form-group">
+                        <label for="password">Contraseña:</label>
+                        <input type="password" name="password" class="form-control form-control-sm" required>
+                    </div>
 
-        <div class="form-group">
-            <label for="rol">Rol:</label>
-            <select name="rol" class="form-control form-control-sm">
-                <option value="docente">Docente</option>
-                <option value="administrador">Administrador</option>
-            </select>
-        </div>
+                    <div class="form-group">
+                    <label for="rol">Rol:</label>
+                    <select name="rol" class="form-control form-control-sm" required>
+                        <option value="docente">Docente</option>
+                        <option value="administrador">Administrador</option>
+                    </select>
 
-        <div class="form-group">
-            <label for="isla">Isla:</label>
-            <select name="isla" class="form-control form-control-sm">
-                <option value="Tenerife">Tenerife</option>
-                <option value="Gran Canaria">Gran Canaria</option>
-                <option value="Lanzarote">Lanzarote</option>
-                <option value="Fuerteventura">Fuerteventura</option>
-                <option value="La Palma">La Palma</option>
-                <option value="La Gomera">La Gomera</option>
-                <option value="El Hierro">El Hierro</option>
-                <option value="La Graciosa">La Graciosa</option>
-            </select>
-        </div>
+                    </div>
 
-        <div class="form-group">
-            <label for="disponibilidad">Disponibilidad:</label>
-            <select name="disponibilidad" class="form-control form-control-sm">
-                <option value="1">Disponible</option>
-                <option value="0">No Disponible</option>
-            </select>
-        </div>
+                    <div class="form-group">
+                        <label for="isla">Isla:</label>
+                        <select name="isla" class="form-control form-control-sm">
+                            <option value="Tenerife">Tenerife</option>
+                            <option value="Gran Canaria">Gran Canaria</option>
+                            <option value="Lanzarote">Lanzarote</option>
+                            <option value="Fuerteventura">Fuerteventura</option>
+                            <option value="La Palma">La Palma</option>
+                            <option value="La Gomera">La Gomera</option>
+                            <option value="El Hierro">El Hierro</option>
+                            <option value="La Graciosa">La Graciosa</option>
+                        </select>
+                    </div>
 
-        <div class="form-group">
-            <label for="puntuacion">Puntuación:</label>
-            <input type="number" name="puntuacion" class="form-control form-control-sm" step="0.01" required>
-        </div>
+                    <div class="form-group">
+                        <label for="disponibilidad">Disponibilidad:</label>
+                        <select name="disponibilidad" class="form-control form-control-sm">
+                            <option value="1">Disponible</option>
+                            <option value="0">No Disponible</option>
+                        </select>
+                    </div>
 
-        <button type="submit" class="btn btn-success">Guardar</button>
-    </form>
-</div>
+                    <div class="form-group">
+                        <label for="puntuacion">Puntuación:</label>
+                        <input type="number" name="puntuacion" class="form-control form-control-sm" step="0.01" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                </form>
+            </div>
 
 
             <!-- Tabla con la lista de usuarios -->
             <table class="table">
                 <thead>
                     <tr>
+                        <th>ID</th>
                         <th>Nombre</th>
                         <th>Apellido</th>
+                        <th>DNI/NIE</th>
                         <th>Email</th>
                         <th>Disponibilidad</th>
                         <th>Isla</th>
@@ -164,21 +170,35 @@ $solicitudes = $solicitudModel->obtenerTodasSolicitudes();
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($usuarios as $usuario): ?>
+                <?php foreach ($usuarios as $usuario): ?>
                     <tr>
-                        <td><?= htmlspecialchars($usuario['nombre']); ?></td>
+                    <td><?= htmlspecialchars($usuario['id_usuario']); ?></td>
+                    <td><?= htmlspecialchars($usuario['nombre']); ?></td>
                         <td><?= htmlspecialchars($usuario['apellido']); ?></td>
+                        <td><?= htmlspecialchars($usuario['dni']); ?></td>
                         <td><?= htmlspecialchars($usuario['email']); ?></td>
                         <td><?= $usuario['disponibilidad'] ? 'Disponible' : 'No Disponible'; ?></td>
                         <td><?= htmlspecialchars($usuario['isla']); ?></td>
                         <td><?= htmlspecialchars($usuario['puntuacion']); ?></td>
                         <td><?= $usuarioModel->obtenerPuestoEnLista($usuario['id_usuario']); ?></td>
                         <td>
-                            <button class="btn btn-light border"><img src="../assets/icons/editar.png" alt="Editar" width="20"></button>
-                            <button class="btn btn-light border"><img src="../assets/icons/eliminar.png" alt="Eliminar" width="20"></button>
+                        <form action="../controllers/UsuarioController.php" method="POST">
+                            <input type="hidden" name="action" value="editar">
+                            <input type="hidden" name="id_usuario" value="<?= $usuario['id_usuario']; ?>">
+                            <button type="submit" class="btn btn-light border">
+                                <img src="../assets/icons/editar.png" alt="Editar" width="20">
+                            </button>
+                        </form>
+                        <form action="../controllers/UsuarioController.php" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar este usuario? Esta acción no se puede deshacer.');">
+                            <input type="hidden" name="action" value="eliminar">
+                            <input type="hidden" name="id_usuario" value="<?= $usuario['id_usuario']; ?>">
+                            <button type="submit" class="btn btn-light border">
+                                <img src="../assets/icons/eliminar.png" alt="Eliminar" width="20">
+                            </button>
+                        </form>
                         </td>
                     </tr>
-                    <?php endforeach; ?>
+                <?php endforeach; ?>
                 </tbody>
             </table>
          

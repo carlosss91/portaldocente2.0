@@ -9,9 +9,9 @@ class Usuario {
         $this->db = Database::conectar();
     }
 
-    // Obtener todos los usuarios (solo datos esenciales)
+    // Obtener todos los usuarios 
     public function obtenerUsuarios() {
-        $sql = "SELECT id_usuario, nombre, apellido, email, disponibilidad, isla, puntuacion FROM usuario"; 
+        $sql = "SELECT id_usuario, nombre, apellido, dni, email, disponibilidad, isla, puntuacion FROM usuario"; 
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -62,6 +62,27 @@ class Usuario {
             return $stmt->execute([$nombre, $apellido, $email, $telefono, $disponibilidad, $isla, $id_usuario]);
         }
     }
+
+    // Crear un nuevo usuario
+    public function crearUsuario($nombre, $apellido, $dni, $email, $telefono, $password, $rol, $isla, $disponibilidad, $puntuacion) {
+        // Verificar que el rol sea válido antes de insertarlo
+        $roles_validos = ['docente', 'administrador'];
+        if (!in_array($rol, $roles_validos)) {
+            $rol = 'docente'; // Valor por defecto si el rol no es válido
+        }
     
+        $sql = "INSERT INTO usuario (nombre, apellido, dni, email, telefono, password, rol, isla, disponibilidad, puntuacion) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$nombre, $apellido, $dni, $email, $telefono, $password, $rol, $isla, $disponibilidad, $puntuacion]);
+    }
+
+    // Eliminar un usuario por su ID
+    public function eliminarUsuario($id_usuario) {
+        $sql = "DELETE FROM usuario WHERE id_usuario = ?";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$id_usuario]);
+    }
+  
 }
 ?>
