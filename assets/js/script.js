@@ -195,8 +195,30 @@ function eliminarAdjudicacion(btn) {
 }
 
 // ------------------  FORMULARIO SOLICITUDES ------------------ 
-// Función para mostrar el formulario de solicitudes
-    function toggleFormularioSolicitudes() {
-        var formulario = document.getElementById("formularioSolicitud");
-        formulario.style.display = formulario.style.display === "none" ? "block" : "none";
+   // Función para mostrar/ocultar el formulario de solicitudes
+   function toggleFormularioSolicitudes() {
+    var formulario = document.getElementById("formularioSolicitud");
+    formulario.style.display = formulario.style.display === "none" ? "block" : "none";
+}
+
+// Función para eliminar una solicitud con confirmación
+function eliminarSolicitud(btn) {
+    if (confirm("¿Seguro que deseas eliminar esta solicitud?")) {
+        var row = btn.closest("tr"); // Obtener la fila de la solicitud
+        var id_solicitud = row.getAttribute("data-id"); // Obtener el ID de la solicitud
+        
+        // Crear formulario dinámico para enviar la solicitud de eliminación
+        var form = document.createElement("form");
+        form.method = "POST";
+        form.action = "../controllers/SolicitudController.php";
+        
+        var inputId = document.createElement("input");
+        inputId.type = "hidden";
+        inputId.name = "eliminar_solicitud";
+        inputId.value = id_solicitud;
+        
+        form.appendChild(inputId);
+        document.body.appendChild(form);
+        form.submit(); // Enviar el formulario automáticamente
     }
+}

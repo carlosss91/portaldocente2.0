@@ -38,16 +38,27 @@ if (!is_array($solicitudes)) {
     <script src="../assets/js/script.js" defer></script>
 </head>
 <body>
-     <!-- Barra superior -->
-     <header class="top-bar">
+      <!-- Barra superior -->
+      <header class="top-bar">
+        <!-- Botón de colapsar con iconos dinámicos -->
         <button id="toggle-btn" class="toggle-sidebar-btn" onclick="toggleSidebar()">
             <img id="collapse-icon" src="../assets/icons/menu_static.png" alt="Colapsar" class="toggle-icon sidebar-icon">
         </button>
+
+
+        <!-- Logo Gobierno de Canarias -->
         <img src="../assets/img/logo_canarias.png" alt="Gobierno de Canarias" class="logo-canarias">
+        
+        <!-- Campo de búsqueda -->
         <div class="search-container">
             <input type="text" placeholder="Buscar..." class="search-bar">
-            <button class="search-btn"><i class="fas fa-search"></i></button>
+            <button class="search-btn">
+                <i class="fas fa-search">
+                <img src="../assets/icons/search_static.png" alt="Inicio" class="sidebar-icon">
+            </i></button>
         </div>
+
+        <!-- Icono de usuario -->
         <div class="user-menu" onclick="toggleUserMenu(event)">
             <img src="../assets/icons/user_static.png" alt="Usuario" class="user-icon">
             <div class="dropdown-content" id="userDropdown">
@@ -55,7 +66,9 @@ if (!is_array($solicitudes)) {
                 <a href="../controllers/logout.php">Cerrar Sesión</a>
             </div>
         </div>
+
     </header>
+
 
     <!-- Barra lateral -->
     <nav class="sidebar" id="sidebar">
@@ -101,25 +114,30 @@ if (!is_array($solicitudes)) {
 
         <!-- Tabla de solicitudes -->
         <table class="table">
-            <thead>
-                <tr>
-                    <th>Tipo</th>
-                    <th>Estado</th>
-                    <th>Detalles</th>
-                    <th>Fecha</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($solicitudes as $solicitud): ?>
-                <tr>
-                    <td><?= htmlspecialchars($solicitud["tipo_solicitud"] ?? 'No disponible') ?></td>
-                    <td><?= htmlspecialchars($solicitud["estado_solicitud"] ?? 'No disponible') ?></td>
-                    <td><?= htmlspecialchars($solicitud["detalles_destino_solicitado"] ?? 'No disponible') ?></td>
-                    <td><?= htmlspecialchars($solicitud["fecha_solicitud"] ?? 'No disponible') ?></td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+    <thead>
+        <tr>
+            <th>Tipo</th>
+            <th>Estado</th>
+            <th>Detalles</th>
+            <th>Fecha</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($solicitudes as $solicitud): ?>
+        <tr data-id="<?= $solicitud['id_solicitud'] ?>">
+            <td><?= htmlspecialchars($solicitud["tipo_solicitud"] ?? 'No disponible') ?></td>
+            <td><?= htmlspecialchars($solicitud["estado_solicitud"] ?? 'No disponible') ?></td>
+            <td><?= htmlspecialchars($solicitud["detalles_destino_solicitado"] ?? 'No disponible') ?></td>
+            <td><?= htmlspecialchars($solicitud["fecha_solicitud"] ?? 'No disponible') ?></td>
+            <td>
+                <button class="btn btn-light border" onclick="eliminarSolicitud(this)" title="Eliminar">
+                    <img src="../assets/icons/eliminar.png" alt="Eliminar" width="20">
+                </button>
+            </td>
+        </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
     </main>
        <!-- Pie de página -->
        <footer class="footer">

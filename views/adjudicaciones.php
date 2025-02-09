@@ -53,16 +53,27 @@ $pagina_activa = basename($_SERVER['PHP_SELF'], ".php");
     <script src="../assets/js/script.js" defer></script>
 </head>
 <body>
-    <!-- Barra superior -->
-    <header class="top-bar">
+      <!-- Barra superior -->
+      <header class="top-bar">
+        <!-- Botón de colapsar con iconos dinámicos -->
         <button id="toggle-btn" class="toggle-sidebar-btn" onclick="toggleSidebar()">
             <img id="collapse-icon" src="../assets/icons/menu_static.png" alt="Colapsar" class="toggle-icon sidebar-icon">
         </button>
+
+
+        <!-- Logo Gobierno de Canarias -->
         <img src="../assets/img/logo_canarias.png" alt="Gobierno de Canarias" class="logo-canarias">
+        
+        <!-- Campo de búsqueda -->
         <div class="search-container">
             <input type="text" placeholder="Buscar..." class="search-bar">
-            <button class="search-btn"><i class="fas fa-search"></i></button>
+            <button class="search-btn">
+                <i class="fas fa-search">
+                <img src="../assets/icons/search_static.png" alt="Inicio" class="sidebar-icon">
+            </i></button>
         </div>
+
+        <!-- Icono de usuario -->
         <div class="user-menu" onclick="toggleUserMenu(event)">
             <img src="../assets/icons/user_static.png" alt="Usuario" class="user-icon">
             <div class="dropdown-content" id="userDropdown">
@@ -70,7 +81,9 @@ $pagina_activa = basename($_SERVER['PHP_SELF'], ".php");
                 <a href="../controllers/logout.php">Cerrar Sesión</a>
             </div>
         </div>
+
     </header>
+
 
     <!-- Barra lateral -->
     <nav class="sidebar" id="sidebar">

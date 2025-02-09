@@ -1,35 +1,24 @@
-/* Estilos para el botón de Nueva Solicitud */
-#mostrarFormulario {
+  /* Estilos para el botón de mostrar formulario */
+  #mostrarFormulario {
     padding: 5px 15px;
     font-size: 14px;
     width: auto;
     display: inline-block;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-#mostrarFormulario:hover {
-    background-color: #0056b3;
 }
 
 /* Estilos para la tabla de solicitudes */
-.table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
 .table th, .table td {
     text-align: center;
-    padding: 10px;
-    border: 1px solid #ddd;
+    width: 25%; /* Asegurar que todas las columnas tengan el mismo tamaño */
 }
 
-.table th {
-    background-color: #f8f9fa;
-    font-weight: bold;
+/* Estilos para el formulario de solicitud */
+#formularioSolicitud {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background: #f8f9fa;
 }
 
 /* Estilo para el formulario */

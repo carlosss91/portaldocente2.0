@@ -20,8 +20,8 @@ body {
 .canarias-logo {
     position: absolute;
     top: 20px;
-    left: 20px;
-    width: 80px;
+    left: 80px;
+    width: 120px;
 }
 
 /* Cuadro de inicio de sesión */
@@ -95,7 +95,7 @@ body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Logo en la barra superior */
+/* Logo  de Gobierno de Canarias en la barra superior */
 .logo-canarias {
     width: 120px;
     height: auto;
