@@ -18,20 +18,23 @@ class Adjudicacion {
 
     // Agregar una nueva adjudicación con isla y municipio
     public function agregarAdjudicacion($id_usuario, $isla, $municipio) {
-        $stmt = $this->db->prepare("INSERT INTO adjudicacion (id_usuario, isla, municipio) VALUES (?, ?, ?)");
-        return $stmt->execute([$id_usuario, $isla, $municipio]);
+        $sql = "INSERT INTO adjudicacion (id_usuario, isla, municipio, fecha_adjudicacion) 
+                VALUES (:id_usuario, :isla, :municipio, NOW())";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(":id_usuario", $id_usuario, PDO::PARAM_INT);
+        $stmt->bindParam(":isla", $isla, PDO::PARAM_STR);
+        $stmt->bindParam(":municipio", $municipio, PDO::PARAM_STR);
+        return $stmt->execute();
     }
 
-    // Modificar una adjudicación existente cambiando isla y municipio
-    public function modificarAdjudicacion($id_adjudicacion, $nueva_isla, $nuevo_municipio) {
-        $stmt = $this->db->prepare("UPDATE adjudicacion SET isla = ?, municipio = ? WHERE id_adjudicacion = ?");
-        return $stmt->execute([$nueva_isla, $nuevo_municipio, $id_adjudicacion]);
-    }
 
     // Eliminar adjudicación por ID
     public function eliminarAdjudicacion($id_adjudicacion) {
-        $stmt = $this->db->prepare("DELETE FROM adjudicacion WHERE id_adjudicacion = ?");
-        return $stmt->execute([$id_adjudicacion]);
+        $sql = "DELETE FROM adjudicacion WHERE id_adjudicacion = :id_adjudicacion";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(":id_adjudicacion", $id_adjudicacion, PDO::PARAM_INT);
+        return $stmt->execute();
     }
+    
 }
 ?>

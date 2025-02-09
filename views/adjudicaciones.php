@@ -49,6 +49,7 @@ $pagina_activa = basename($_SERVER['PHP_SELF'], ".php");
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
     <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="../assets/css/adjudicaciones.css">
     <script src="../assets/js/script.js" defer></script>
 </head>
 <body>
@@ -95,46 +96,51 @@ $pagina_activa = basename($_SERVER['PHP_SELF'], ".php");
     <!-- Contenido -->
     <main class="content">
         <h2 class="page-title">Adjudicaciones</h2>
-        <button id="mostrarFormulario" class="btn btn-primary" onclick="toggleFormulario()">Nueva Adjudicación</button>
+        <button id="mostrarFormulario" class="btn btn-primary" onclick="toggleFormularioAdjudicaciones()">Nueva Adjudicación</button>
         
         <div id="formularioAdjudicacion" style="display:none;">
-            <form action="../controllers/adjudicacionesController.php" method="POST">
-                <?php for ($i = 1; $i <= 10; $i++): ?>
-                    <div class="d-flex align-items-center mb-2 gap-3">
-                        <span><?= $i ?>.</span>
-                        <select name="adjudicaciones[<?= $i ?>][isla]" class="form-select" id="isla<?= $i ?>" onchange="actualizarMunicipios(this, <?= $i ?>)">
-                            <option value="">Seleccione una isla</option>
-                            <?php foreach (array_keys($municipios_por_isla) as $isla): ?>
-                                <option value="<?= $isla ?>"><?= $isla ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                        <select name="adjudicaciones[<?= $i ?>][municipio]" class="form-select" id="municipio<?= $i ?>">
-                            <option value="">Seleccione un municipio</option>
-                        </select>
-                    </div>
-                <?php endfor; ?>
-                <button type="submit" class="btn btn-success">Guardar</button>
-            </form>
-    </div>
+    <form action="../controllers/AdjudicacionController.php" method="POST">
+        <div class="d-flex align-items-center mb-2 gap-3">
+            <!-- Selector de isla -->
+            <label for="isla">Isla:</label>
+            <select name="isla" class="form-select" id="isla" onchange="actualizarMunicipios(this)">
+                <option value="">Seleccione una isla</option>
+                <?php foreach (array_keys($municipios_por_isla) as $isla): ?>
+                    <option value="<?= $isla ?>"><?= $isla ?></option>
+                <?php endforeach; ?>
+            </select>
+            
+            <!-- Selector de municipio (se llenará dinámicamente) -->
+            <label for="municipio">Municipio:</label>
+            <select name="municipio" class="form-select" id="municipio">
+                <option value="">Seleccione un municipio</option>
+            </select>
+            
+            <!-- Botón de guardar, alineado a la derecha -->
+            <button type="submit" class="btn btn-success">Guardar</button>
+        </div>
+    </form>
+</div>
 
+    <!-- TABLA -->
         <table class="table">
             <thead>
                 <tr>
                     <th>Isla</th>
                     <th>Municipio</th>
                     <th>Fecha</th>
-                    <th>Acción</th>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach ($adjudicaciones as $adj): ?>
-                <tr>
+                <tr data-id="<?= $adj['id_adjudicacion'] ?>">
                     <td><?= htmlspecialchars($adj["isla"] ?? 'No disponible') ?></td>
                     <td><?= htmlspecialchars($adj["municipio"] ?? 'No disponible') ?></td>
                     <td><?= htmlspecialchars($adj["fecha_adjudicacion"] ?? 'No disponible') ?></td>
                     <td>
-                        <button class="btn btn-warning">Editar</button>
-                        <button class="btn btn-danger">Eliminar</button>
+                        <button class="btn btn-light border" onclick="eliminarAdjudicacion(this)" title="Eliminar">
+                            <img src="../assets/icons/eliminar.png" alt="Eliminar" width="20">
+                        </button>
                     </td>
                 </tr>
                 <?php endforeach; ?>

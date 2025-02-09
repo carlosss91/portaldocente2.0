@@ -1,0 +1,57 @@
+/* Estilos para el botón de Nueva Solicitud */
+#mostrarFormulario {
+    padding: 5px 15px;
+    font-size: 14px;
+    width: auto;
+    display: inline-block;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#mostrarFormulario:hover {
+    background-color: #0056b3;
+}
+
+/* Estilos para la tabla de solicitudes */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th, .table td {
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+.table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+/* Estilo para el formulario */
+#formularioSolicitud {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background: #f8f9fa;
+}
+
+/* Estilos para el botón de enviar */
+#formularioSolicitud button {
+    margin-top: 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#formularioSolicitud button:hover {
+    background-color: #218838;
+}

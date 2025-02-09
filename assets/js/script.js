@@ -139,14 +139,12 @@ var municipiosPorIsla = {
 };
 
 // Función para actualizar municipios cuando se seleccione una isla
-function actualizarMunicipios(select, index) {
+function actualizarMunicipios(select) {
     var islaSeleccionada = select.value;
-    var municipioSelect = document.getElementsByName(`adjudicaciones[${index}][municipio]`)[0];
+    var municipioSelect = document.getElementById("municipio");
 
-    // Limpiar el select de municipios
     municipioSelect.innerHTML = '<option value="">Seleccione un municipio</option>';
 
-    // Si la isla tiene municipios, agregarlos al select
     if (municipiosPorIsla[islaSeleccionada]) {
         municipiosPorIsla[islaSeleccionada].forEach(municipio => {
             let option = document.createElement("option");
@@ -157,7 +155,8 @@ function actualizarMunicipios(select, index) {
     }
 }
 
-function toggleFormulario() {
+// función para mostrar el formulario de adjudicaciones
+function toggleFormularioAdjudicaciones() {
     var formulario = document.getElementById("formularioAdjudicacion");
     if (formulario.style.display === "none" || formulario.style.display === "") {
         formulario.style.display = "block";
@@ -167,3 +166,37 @@ function toggleFormulario() {
 }
 
 
+
+// Botón eliminar adjudicación
+
+function eliminarAdjudicacion(btn) {
+    if (confirm("¿Seguro que deseas eliminar esta adjudicación?")) {
+        var row = btn.closest("tr");
+        var id_adjudicacion = row.getAttribute("data-id");
+
+        if (!id_adjudicacion) {
+            alert("Error: No se encontró el ID de la adjudicación.");
+            return;
+        }
+
+        var form = document.createElement("form");
+        form.method = "POST";
+        form.action = "../controllers/AdjudicacionController.php";
+
+        var inputId = document.createElement("input");
+        inputId.type = "hidden";
+        inputId.name = "eliminar_adjudicacion";
+        inputId.value = id_adjudicacion;
+
+        form.appendChild(inputId);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+// ------------------  FORMULARIO SOLICITUDES ------------------ 
+// Función para mostrar el formulario de solicitudes
+    function toggleFormularioSolicitudes() {
+        var formulario = document.getElementById("formularioSolicitud");
+        formulario.style.display = formulario.style.display === "none" ? "block" : "none";
+    }

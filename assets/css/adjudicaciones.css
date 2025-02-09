@@ -1,0 +1,14 @@
+
+
+/* Ajustar tamaño del botón Nueva Adjudicación */
+#mostrarFormulario {
+    padding: 5px 15px; /* Reducir el padding para hacerlo más compacto */
+    font-size: 14px;
+    width: auto; /* Evita que el botón ocupe todo el ancho */
+    display: inline-block; /* Asegura que el tamaño se ajuste al contenido */
+}
+/* Ajustar tamaño de la tabla */
+.table th, .table td {
+    width: 33%; /* Hacer que cada columna tenga el mismo ancho */
+    text-align: center;
+}

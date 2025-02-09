@@ -1,35 +1,39 @@
 <?php
-require_once '../config/db.php'; // Asegura que se conecta a la base de datos
+require_once '../config/db.php'; // Asegurar que se incluye la conexión
 require_once '../models/Adjudicacion.php';
 session_start();
 
-// Verifica que el usuario esté autenticado
+// Verificar que el usuario esté autenticado
 if (!isset($_SESSION["id_usuario"])) {
     header("Location: ../views/login.php");
     exit();
 }
 
-$adjudicacion = new Adjudicacion(Database::conectar()); // Pasa la conexión al modelo
+$adjudicacion = new Adjudicacion();
 $id_usuario = $_SESSION["id_usuario"];
 
 // Verificar si se envió el formulario de adjudicación
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST["adjudicaciones"]) && is_array($_POST["adjudicaciones"])) {
-        foreach ($_POST["adjudicaciones"] as $adjudicacionData) {
-            $isla = isset($adjudicacionData["isla"]) ? trim($adjudicacionData["isla"]) : "";
-            $municipio = isset($adjudicacionData["municipio"]) ? trim($adjudicacionData["municipio"]) : "";
+    if (isset($_POST["isla"]) && isset($_POST["municipio"])) {
+        $isla = trim($_POST["isla"]);
+        $municipio = trim($_POST["municipio"]);
 
-            // Solo inserta si se seleccionaron valores válidos
-            if (!empty($isla) && !empty($municipio)) {
-                $adjudicacion->agregarAdjudicacion($id_usuario, $isla, $municipio);
-            }
+        // Solo insertar si se seleccionaron valores válidos
+        if (!empty($isla) && !empty($municipio)) {
+            $adjudicacion->agregarAdjudicacion($id_usuario, $isla, $municipio);
         }
-    } elseif (isset($_POST["eliminar_adjudicacion"])) {
-        $id_adjudicacion = $_POST["eliminar_adjudicacion"];
-        $adjudicacion->eliminarAdjudicacion($id_adjudicacion);
     }
+    
+    // Verificar si se ha enviado una solicitud para eliminar una adjudicación
+    if (isset($_POST["eliminar_adjudicacion"])) {
+        $id_adjudicacion = $_POST["eliminar_adjudicacion"];
 
-    header("Location: ../views/adjudicaciones.php");
+        if (!empty($id_adjudicacion)) {
+            $adjudicacion->eliminarAdjudicacion($id_adjudicacion);
+        }
+    }
+    
+    header("Location: ../views/adjudicaciones.php?success=1");
     exit();
 }
 ?>
