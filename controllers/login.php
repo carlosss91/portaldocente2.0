@@ -30,10 +30,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // Redirige al usuario según su rol
             if ($usuario["rol"] === "administrador") {
-                header("Location: http://localhost/portaldocente2.0/views/admin.php");
+                header("Location: ../views/admin.php");
             } else {
-                header("Location: http://localhost/portaldocente2.0/views/dashboard.php");
+                header("Location: ../views/dashboard.php");
             }
+
             exit(); // Termina la ejecución del script tras la redirección
         } else {
             // Si la contraseña es incorrecta, redirige de nuevo al login con un mensaje de error

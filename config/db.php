@@ -1,9 +1,9 @@
 <?php
 class Database {
     private static $host = "localhost";
-    private static $dbname = "portal_docente";
+    private static $dbname = "portaldocente";
     private static $usuario = "root"; // Usuario
-    private static $password = "root"; // Contraseña
+    private static $password = ""; // Contraseña
     private static $pdo = null;
 
     public static function conectar() {

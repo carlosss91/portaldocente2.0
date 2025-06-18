@@ -29,64 +29,16 @@ $noticias = $noticiaController->mostrarNoticias();
 </head>
 <body>
 
-    <!-- Barra superior -->
-    <header class="top-bar">
-        <!-- Botón de colapsar con iconos dinámicos -->
-        <button id="toggle-btn" class="toggle-sidebar-btn" onclick="toggleSidebar()">
-            <img id="collapse-icon" src="../assets/icons/menu_static.png" alt="Colapsar" class="toggle-icon sidebar-icon">
-        </button>
-
-
-        <!-- Logo Gobierno de Canarias -->
-        <img src="../assets/img/logo_canarias.png" alt="Gobierno de Canarias" class="logo-canarias">
-        
-        <!-- Campo de búsqueda -->
-        <div class="search-container">
-            <input type="text" placeholder="Buscar..." class="search-bar">
-            <button class="search-btn">
-                <i class="fas fa-search">
-                <img src="../assets/icons/search_static.png" alt="Inicio" class="sidebar-icon">
-            </i></button>
-        </div>
-
-           <!-- Icono de usuario -->
-           <div class="user-menu" onclick="toggleUserMenu(event)">
-                <img src="../assets/icons/user_static.png" alt="Usuario" class="user-icon">
-                <div class="dropdown-content" id="userDropdown">
-                    <a href="usuario.php">Mi Perfil</a>
-                    <a href="../controllers/logout.php">Cerrar Sesión</a>
-                </div>
-        </div>
-
-    </header>
-
-
-    <!-- Barra lateral con iconos -->
-    <nav class="sidebar" id="sidebar">
-        <div class="sidebar-content">
-            <a href="dashboard.php" class="nav-link <?php echo ($pagina_activa == 'dashboard') ? 'active' : ''; ?>">
-                <img src="../assets/icons/home_static.png" alt="Inicio" class="sidebar-icon"> <span>Inicio</span>
-            </a>
-            <a href="noticias.php" class="nav-link active">
-                <img src="../assets/icons/news_static.png" alt="Noticias" class="sidebar-icon"> <span>Noticias</span>
-            </a>
-            <a href="adjudicaciones.php" class="nav-link <?php echo ($pagina_activa == 'adjudicaciones') ? 'active' : ''; ?>">
-                <img src="../assets/icons/island_static.png" alt="Adjudicaciones" class="sidebar-icon"> <span>Adjudicaciones</span>
-            </a>
-            <a href="solicitudes.php" class="nav-link <?php echo ($pagina_activa == 'solicitudes') ? 'active' : ''; ?>">
-                <img src="../assets/icons/request_static.png" alt="Solicitudes" class="sidebar-icon"> <span>Solicitudes</span>
-            </a>
-            <a href="formacion.php" class="nav-link <?php echo ($pagina_activa == 'formacion') ? 'active' : ''; ?>">
-                <img src="../assets/icons/education_static.png" alt="Formación" class="sidebar-icon"> <span>Formación</span>
-            </a>
-        </div>
-    </nav>
+    <!-- Header y barra lateral -->
+    <?php include 'partials/header.php'; ?>
+    <?php include 'partials/sidebar.php'; ?>
 
 <!-- Contenido de noticias -->
 <main class="content">
     <h2 class="page-title">Noticias</h2>
-    
-    <?php if (!empty($noticias)): ?>
+
+   <?php if (!empty($noticias)): ?>
+    <div class="news-list">
         <?php foreach ($noticias as $noticia): ?>
             <div class="news-container">
                 <div class="news-card" id="news-card-<?php echo $noticia['id_noticia']; ?>" onclick="toggleNews(<?php echo $noticia['id_noticia']; ?>)">
@@ -110,17 +62,12 @@ $noticias = $noticiaController->mostrarNoticias();
     <?php else: ?>
         <p>No hay noticias disponibles.</p>
     <?php endif; ?>
+    
 </main>
 
 
     <!-- Pie de página -->
-    <footer class="footer">
-        <div class="footer-left">© 2025 Gobierno de Canarias - Consejería de Educación</div>
-        <div class="footer-right">
-            <a href="#">Sobre Nosotros</a>
-            <a href="#">Aviso Legal</a>
-        </div>
-    </footer>
+   <?php include 'partials/footer.php'; ?>
 
     <script>
         function toggleNews(id) {

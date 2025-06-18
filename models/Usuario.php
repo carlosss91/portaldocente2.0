@@ -5,76 +5,147 @@ class Usuario {
     private $db;
 
     public function __construct() {
-        // Establecer conexión con la base de datos
         $this->db = Database::conectar();
     }
 
-    // Obtener todos los usuarios 
+    // Obtener todos los usuarios (ahora incluyendo fecha_creacion)
     public function obtenerUsuarios() {
-        $sql = "SELECT id_usuario, nombre, apellido, dni, email, disponibilidad, isla, puntuacion FROM usuario"; 
+        $sql = "
+            SELECT 
+                id_usuario,
+                nombre,
+                apellido,
+                dni,
+                email,
+                disponibilidad,
+                isla,
+                puntuacion,
+                fecha_creacion
+            FROM usuario
+        ";
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    
+
+    // Nuevo: Obtener usuarios ordenados por un campo y orden dados
+    public function obtenerUsuariosOrdenados($campo, $orden) {
+        // Lista blanca de campos y orden
+        $allowedFields = ['nombre', 'puntuacion', 'fecha_creacion'];
+        $allowedOrder  = ['asc', 'desc'];
+
+        // Validar campo
+        if (!in_array($campo, $allowedFields)) {
+            $campo = 'nombre';
+        }
+        // Validar orden
+        $orden = strtolower($orden);
+        if (!in_array($orden, $allowedOrder)) {
+            $orden = 'asc';
+        }
+
+        $sql = "
+            SELECT 
+                id_usuario,
+                nombre,
+                apellido,
+                dni,
+                email,
+                disponibilidad,
+                isla,
+                puntuacion,
+                fecha_creacion
+            FROM usuario
+            ORDER BY {$campo} {$orden}
+        ";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
     // Obtener un usuario por su ID con todos los datos relevantes
     public function obtenerUsuarioPorId($id) {
-        $sql = "SELECT id_usuario, nombre, apellido, email, telefono, disponibilidad, isla, puntuacion, password 
-                FROM usuario 
-                WHERE id_usuario = :id";
+        $sql = "
+            SELECT 
+                id_usuario,
+                nombre,
+                apellido,
+                email,
+                telefono,
+                disponibilidad,
+                isla,
+                puntuacion,
+                password 
+            FROM usuario 
+            WHERE id_usuario = :id
+        ";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(":id", $id, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    //Calcular la posición de un usuario en la lista de puntuaciones
+    // Calcular la posición de un usuario en la lista de puntuaciones
     public function obtenerPuestoEnLista($id_usuario) {
-        // Consulta para obtener los usuarios ordenados por puntuación DESCENDENTE
         $sql = "SELECT id_usuario FROM usuario ORDER BY puntuacion DESC";
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-        // Buscar el puesto del usuario en la lista
         foreach ($usuarios as $index => $usuario) {
             if ($usuario['id_usuario'] == $id_usuario) {
-                return $index + 1; // Retorna la posición en la lista (empezando desde 1)
+                return $index + 1;
             }
         }
     
-        return "No encontrado"; // Si por alguna razón no se encuentra en la lista
+        return "No encontrado";
     }
-    
 
     // Actualizar datos del usuario (excepto la contraseña)
     public function actualizarUsuario($id_usuario, $nombre, $apellido, $email, $telefono, $disponibilidad, $isla, $password = null) {
         if ($password) {
-            // Si el usuario ingresó una nueva contraseña, la actualiza
-            $sql = "UPDATE usuario SET nombre = ?, apellido = ?, email = ?, telefono = ?, disponibilidad = ?, isla = ?, password = ? WHERE id_usuario = ?";
+            $sql = "
+                UPDATE usuario 
+                SET nombre = ?, apellido = ?, email = ?, telefono = ?, disponibilidad = ?, isla = ?, password = ? 
+                WHERE id_usuario = ?
+            ";
             $stmt = $this->db->prepare($sql);
-            return $stmt->execute([$nombre, $apellido, $email, $telefono, $disponibilidad, $isla, $password, $id_usuario]);
+            return $stmt->execute([
+                $nombre, $apellido, $email, $telefono, 
+                $disponibilidad, $isla, $password, $id_usuario
+            ]);
         } else {
-            // Si no ingresó una contraseña, actualiza solo los otros datos
-            $sql = "UPDATE usuario SET nombre = ?, apellido = ?, email = ?, telefono = ?, disponibilidad = ?, isla = ? WHERE id_usuario = ?";
+            $sql = "
+                UPDATE usuario 
+                SET nombre = ?, apellido = ?, email = ?, telefono = ?, disponibilidad = ?, isla = ? 
+                WHERE id_usuario = ?
+            ";
             $stmt = $this->db->prepare($sql);
-            return $stmt->execute([$nombre, $apellido, $email, $telefono, $disponibilidad, $isla, $id_usuario]);
+            return $stmt->execute([
+                $nombre, $apellido, $email, $telefono, 
+                $disponibilidad, $isla, $id_usuario
+            ]);
         }
     }
 
     // Crear un nuevo usuario
     public function crearUsuario($nombre, $apellido, $dni, $email, $telefono, $password, $rol, $isla, $disponibilidad, $puntuacion) {
-        // Verificar que el rol sea válido antes de insertarlo
         $roles_validos = ['docente', 'administrador'];
         if (!in_array($rol, $roles_validos)) {
-            $rol = 'docente'; // Valor por defecto si el rol no es válido
+            $rol = 'docente';
         }
     
-        $sql = "INSERT INTO usuario (nombre, apellido, dni, email, telefono, password, rol, isla, disponibilidad, puntuacion) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $sql = "
+            INSERT INTO usuario 
+                (nombre, apellido, dni, email, telefono, password, rol, isla, disponibilidad, puntuacion) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ";
         $stmt = $this->db->prepare($sql);
-        return $stmt->execute([$nombre, $apellido, $dni, $email, $telefono, $password, $rol, $isla, $disponibilidad, $puntuacion]);
+        return $stmt->execute([
+            $nombre, $apellido, $dni, $email, 
+            $telefono, $password, $rol, $isla, 
+            $disponibilidad, $puntuacion
+        ]);
     }
 
     // Eliminar un usuario por su ID
@@ -83,6 +154,5 @@ class Usuario {
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([$id_usuario]);
     }
-  
 }
 ?>
