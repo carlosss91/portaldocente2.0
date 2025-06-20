@@ -1,100 +1,166 @@
 <?php
-// Iniciar sesión para manejar el usuario logueado
-session_start();
+// ╔═════════════════════════════════════════╗
+// ║     CONTROLADOR DE NOTICIAS            ║
+// ╚═════════════════════════════════════════╝
 
-// Mostrar errores en pantalla para depuración
+session_start(); // Maneja la sesión del usuario
+
+// Mostrar errores para depuración (remover en producción)
 ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Incluir el modelo de Noticia
-require_once '../models/Noticia.php';
+require_once __DIR__ . '/../models/Noticia.php'; // Modelo de noticias
 
 class NoticiaController {
     private $noticiaModel;
 
+    // ╔════════════════╗
+    // ║   CONSTRUCTOR  ║
+    // ╚════════════════╝
     public function __construct() {
-        $this->noticiaModel = new Noticia(); // Instanciar el modelo de Noticia
+        $this->noticiaModel = new Noticia();
     }
 
-    // Obtener todas las noticias desde la base de datos
+    // ╔═════════════════════════════════════════╗
+    // ║   MOSTRAR Noticias para la vista       ║
+    // ╚═════════════════════════════════════════╝
     public function mostrarNoticias() {
         return $this->noticiaModel->obtenerNoticias();
     }
 
-    // Agregar una nueva noticia
+    // ╔═════════════════════════════════════════╗
+    // ║   AGREGAR NUEVA NOTICIA                ║
+    // ╚═════════════════════════════════════════╝
     public function agregarNoticia() {
-        if ($_SERVER["REQUEST_METHOD"] === "POST") {
-            // Verificar que el usuario esté logueado y sea administrador
-            if (!isset($_SESSION['id_usuario']) || $_SESSION['rol'] !== 'administrador') {
-                header("Location: ../index.php?error=Acceso denegado");
-                exit();
-            }
-
-            // Recoger datos del formulario y sanitizarlos
-            $titulo = trim($_POST['titulo'] ?? '');
-            $contenido = trim($_POST['contenido'] ?? '');
-            $imagen_url = trim($_POST['imagen_url'] ?? ''); // Puede estar vacío
-            $autor_id = $_SESSION['id_usuario']; // ID del usuario logueado
-
-            // Validar que título y contenido no estén vacíos
-            if (empty($titulo) || empty($contenido)) {
-                header("Location: ../views/admin.php?error=Todos los campos obligatorios excepto la imagen");
-                exit();
-            }
-
-            // Si no hay imagen, insertar como NULL en la base de datos
-            $imagen_url = !empty($imagen_url) ? $imagen_url : null;
-
-            // Intentar agregar la noticia a la base de datos
-            if ($this->noticiaModel->agregarNoticia($titulo, $contenido, $imagen_url, $autor_id)) {
-                header("Location: ../views/admin.php?mensaje=Noticia creada correctamente");
-                exit();
-            } else {
-                header("Location: ../views/admin.php?error=Error al guardar la noticia");
-                exit();
-            }
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST' ||
+            !isset($_SESSION['id_usuario']) ||
+            $_SESSION['rol'] !== 'administrador'
+        ) {
+            header('Location: ../views/admin.php?error=Acceso denegado');
+            exit();
         }
+
+        // Recoger y sanitizar campos
+        $titulo     = trim($_POST['titulo']      ?? '');
+        $contenido  = trim($_POST['contenido']   ?? '');
+        $imagenUrl  = trim($_POST['imagen_url']  ?? '');
+        $autorId    = intval($_SESSION['id_usuario']);
+        if ($imagenUrl === '') {
+            $imagenUrl = null;
+        }
+
+        // Validar campos obligatorios
+        if ($titulo === '' || $contenido === '') {
+            header('Location: ../views/admin.php?error=Faltan campos obligatorios');
+            exit();
+        }
+
+        // Insertar noticia
+        $ok = $this->noticiaModel->agregarNoticia(
+            $titulo,
+            $contenido,
+            $imagenUrl,
+            $autorId
+        );
+
+        if ($ok) {
+            header('Location: ../views/admin.php?mensaje=Noticia creada correctamente');
+        } else {
+            header('Location: ../views/admin.php?error=Error al crear noticias');
+        }
+        exit();
     }
 
-    // Eliminar una noticia por su ID
-    public function eliminarNoticia() {
-        if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['id_noticia'])) {
-            // Verificar si el usuario tiene permisos de administrador
-            if (!isset($_SESSION['id_usuario']) || $_SESSION['rol'] !== 'administrador') {
-                header("Location: ../index.php?error=Acceso denegado");
-                exit();
-            }
-
-            $id_noticia = intval($_POST['id_noticia']); // Asegurar que sea un número válido
-
-            // Validar que el ID de la noticia es correcto
-            if ($id_noticia <= 0) {
-                header("Location: ../views/admin.php?error=ID de noticia inválido");
-                exit();
-            }
-
-            // Intentar eliminar la noticia
-            if ($this->noticiaModel->eliminarNoticia($id_noticia)) {
-                header("Location: ../views/admin.php?mensaje=Noticia eliminada correctamente");
-                exit();
-            } else {
-                header("Location: ../views/admin.php?error=No se pudo eliminar la noticia");
-                exit();
-            }
+    // ╔═════════════════════════════════════════╗
+    // ║   EDITAR NOTICIA EXISTENTE              ║
+    // ╚═════════════════════════════════════════╝
+    public function editarNoticia() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST' ||
+            !isset($_SESSION['id_usuario']) ||
+            $_SESSION['rol'] !== 'administrador'
+        ) {
+            header('Location: ../views/admin.php?error=Acceso denegado');
+            exit();
         }
+
+        // Recoger y sanitizar campos
+        $id          = intval($_POST['id_noticia']  ?? 0);
+        $titulo      = trim($_POST['titulo']        ?? '');
+        $contenido   = trim($_POST['contenido']     ?? '');
+        $imagenUrl   = trim($_POST['imagen_url']    ?? '');
+        if ($imagenUrl === '') {
+            $imagenUrl = null;
+        }
+
+        // Validar datos
+        if ($id <= 0 || $titulo === '' || $contenido === '') {
+            header('Location: ../views/admin.php?error=Datos inválidos');
+            exit();
+        }
+
+        // Actualizar noticia
+        $ok = $this->noticiaModel->actualizarNoticia(
+            $id,
+            $titulo,
+            $contenido,
+            $imagenUrl
+        );
+
+        if ($ok) {
+            header('Location: ../views/admin.php?mensaje=Noticia actualizada correctamente');
+        } else {
+            header('Location: ../views/admin.php?error=Error al actualizar noticia');
+        }
+        exit();
+    }
+
+    // ╔═════════════════════════════════════════╗
+    // ║   ELIMINAR NOTICIA                      ║
+    // ╚═════════════════════════════════════════╝
+    public function eliminarNoticia() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST' ||
+            !isset($_SESSION['id_usuario']) ||
+            $_SESSION['rol'] !== 'administrador'
+        ) {
+            header('Location: ../views/admin.php?error=Acceso denegado');
+            exit();
+        }
+
+        $id = intval($_POST['id_noticia'] ?? 0);
+        if ($id <= 0) {
+            header('Location: ../views/admin.php?error=ID inválido');
+            exit();
+        }
+
+        $ok = $this->noticiaModel->eliminarNoticia($id);
+        if ($ok) {
+            header('Location: ../views/admin.php?mensaje=Noticia eliminada correctamente');
+        } else {
+            header('Location: ../views/admin.php?error=Error al eliminar noticia');
+        }
+        exit();
     }
 }
 
-// Instanciar el controlador
+// ╔═════════════════════════════════════════╗
+// ║       INSTANCIACIÓN Y RUTEO            ║
+// ╚═════════════════════════════════════════╝
 $noticiaController = new NoticiaController();
 
-// Ejecutar acciones si se accede directamente a este script
-if (isset($_POST['accion'])) {
-    if ($_POST['accion'] === 'agregar') {
-        $noticiaController->agregarNoticia();
-    } elseif ($_POST['accion'] === 'eliminar') {
-        $noticiaController->eliminarNoticia();
+// Procesar acciones solo si es POST
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $action = $_POST['action'] ?? '';
+    switch ($action) {
+        case 'crear':
+            $noticiaController->agregarNoticia();
+            break;
+        case 'editar':
+            $noticiaController->editarNoticia();
+            break;
+        case 'eliminar':
+            $noticiaController->eliminarNoticia();
+            break;
+        // Sin caso por defecto para GET
     }
 }
 ?>

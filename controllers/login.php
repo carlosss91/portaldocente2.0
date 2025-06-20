@@ -1,50 +1,89 @@
 <?php
-session_start(); // Inicia la sesión para poder almacenar datos del usuario autenticado
+// ╔═════════════════════════════════════════╗
+// ║      CONTROLADOR DE LOGIN (controllers/login.php)   ║
+// ╚═════════════════════════════════════════╝
 
-require_once "../config/db.php"; // Incluye la conexión a la base de datos
+// Mostrar errores para depuración (retirar en producción)
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
-// Verifica que la solicitud sea de tipo POST (es decir, que proviene de un formulario)
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = trim($_POST["email"]); // Obtiene el email del formulario y elimina espacios en blanco
-    $password = trim($_POST["password"]); // Obtiene la contraseña del formulario y elimina espacios en blanco
+session_start(); // Inicia la sesión para almacenar datos del usuario
 
-    // Conectar a la base de datos
-    $pdo = Database::conectar(); 
+// Ruta absoluta al archivo de configuración de BD
+require_once __DIR__ . '/../config/db.php';
 
-    // Prepara la consulta SQL para obtener el usuario por su email
-    $sql = "SELECT * FROM usuario WHERE email = ?";
-    $stmt = $pdo->prepare($sql); 
-    $stmt->execute([$email]); // Ejecuta la consulta con el email proporcionado
-    $usuario = $stmt->fetch(PDO::FETCH_ASSOC); // Obtiene el resultado en un array asociativo
+// ╔═════════════════════════════════════════╗
+// ║     PROCESO DE AUTENTICACIÓN POST       ║
+// ╚═════════════════════════════════════════╝
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // ╔════════════════════════╗
+    // ║   RECIBIR CREDENCIALES ║
+    // ╚════════════════════════╝
+    $email    = trim($_POST['email']    ?? '');
+    $password = trim($_POST['password'] ?? '');
 
-    // Verifica si el usuario existe en la base de datos
-    if ($usuario) {
-        // Verifica si la contraseña ingresada coincide con la almacenada en la base de datos
-        // Si la contraseña está hasheada en la base de datos, usa password_verify()
-        if ($password === $usuario["password"]) { 
+    // ╔════════════════════════╗
+    // ║   CONSULTA DE USUARIO  ║
+    // ╚════════════════════════╝
+    $pdo  = Database::conectar();
+    $sql  = 'SELECT id_usuario, email, password, rol FROM usuario WHERE email = ?';
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$email]);
+    $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            // Almacena los datos relevantes en la sesión
-            $_SESSION["id_usuario"] = $usuario["id_usuario"]; // Guarda el ID del usuario
-            $_SESSION["usuario"] = $usuario["email"]; // Guarda el email del usuario
-            $_SESSION["rol"] = $usuario["rol"]; // Guarda el rol del usuario (ej. docente, administrador)
-
-            // Redirige al usuario según su rol
-            if ($usuario["rol"] === "administrador") {
-                header("Location: ../views/admin.php");
-            } else {
-                header("Location: ../views/dashboard.php");
-            }
-
-            exit(); // Termina la ejecución del script tras la redirección
-        } else {
-            // Si la contraseña es incorrecta, redirige de nuevo al login con un mensaje de error
-            header("Location: ../views/login.php?error=Contraseña incorrecta");
-            exit();
-        }
-    } else {
-        // Si el usuario no existe, redirige al login con un mensaje de error
-        header("Location: ../views/login.php?error=Usuario no encontrado");
+    // ╔════════════════════════╗
+    // ║   VERIFICAR EXISTENCIA ║
+    // ╚════════════════════════╝
+    if (!$usuario) {
+        header('Location: ../views/login.php?error=Usuario no encontrado');
         exit();
     }
+
+    // ╔════════════════════════╗
+    // ║   VERIFICAR CONTRASEÑA ║
+    // ╚════════════════════════╝
+    $hash = $usuario['password'];
+    $ok   = false;
+
+    // Comprobación con hash
+    if (password_verify($password, $hash)) {
+        $ok = true;
+    }
+    // Fallback para contraseñas en texto plano
+    elseif ($password === $hash) {
+        $ok = true;
+        // Re-hasear y actualizar
+        $update = $pdo->prepare('UPDATE usuario SET password = ? WHERE id_usuario = ?');
+        $update->execute([
+            password_hash($password, PASSWORD_DEFAULT),
+            $usuario['id_usuario']
+        ]);
+    }
+
+    if (! $ok) {
+        header('Location: ../views/login.php?error=Contraseña incorrecta');
+        exit();
+    }
+
+    // ╔════════════════════════╗
+    // ║   INICIAR SESIÓN       ║
+    // ╚════════════════════════╝
+    $_SESSION['id_usuario'] = $usuario['id_usuario'];
+    $_SESSION['usuario']    = $usuario['email'];
+    $_SESSION['rol']        = $usuario['rol'];
+
+    // ╔════════════════════════╗
+    // ║   REDIRECCIÓN POR ROL  ║
+    // ╚════════════════════════╝
+    if ($usuario['rol'] === 'administrador') {
+        header('Location: ../views/admin.php');
+    } else {
+        header('Location: ../views/dashboard.php');
+    }
+    exit();
+} else {
+    // Si no es POST, redirigir al login
+    header('Location: ../views/login.php');
+    exit();
 }
 ?>

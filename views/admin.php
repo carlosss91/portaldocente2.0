@@ -65,196 +65,393 @@ $solicitudes    = $solicitudModel->obtenerTodasSolicitudes();
         $nextPunt  = ($sort==='puntuacion'     && $order==='asc') ? 'desc' : 'asc';
         $nextFecha = ($sort==='fecha_creacion' && $order==='asc') ? 'desc' : 'asc';
     ?>
-    <section>
-        <h3>Usuarios</h3>
-        <!-- Botón para mostrar el formulario de nuevo usuario -->
-        <div class="d-flex flex-wrap justify-content-center gap-2 mb-3">
-            <button class="btn btn-primary" id="btnNuevoUsuario">Nuevo Usuario</button>
-            <!-- Botones de ordenación -->
-            <a href="?sort=nombre&order=<?= $nextName ?>" class="btn btn-secondary">
-                A-Z <?= $sort==='nombre' ? ($order==='asc' ? '↑' : '↓') : '' ?>
-            </a>
-            <a href="?sort=puntuacion&order=<?= $nextPunt ?>" class="btn btn-secondary">
-                Puntuación <?= $sort==='puntuacion' ? ($order==='asc' ? '↑' : '↓') : '' ?>
-            </a>
-            <a href="?sort=fecha_creacion&order=<?= $nextFecha ?>" class="btn btn-secondary">
-                Fecha creación <?= $sort==='fecha_creacion' ? ($order==='asc' ? '↑' : '↓') : '' ?>
-            </a>
-
+    <?php if(isset($_GET['error']) && $_GET['error']==='usuario_duplicado'): ?>
+        <div class="alert alert-danger text-center">
+            Ya existe un usuario con ese DNI o email. Por favor, utiliza otro.
         </div>
+    <?php endif; ?>
 
-        <!-- Formulario para agregar un nuevo usuario (oculto) -->
-        <div id="formularioUsuario" class="mt-3" style="display: none;">
-            <form action="../controllers/UsuarioController.php" method="POST">
-                <input type="hidden" name="action" value="crear">
-                <!-- grid de inputs -->
-                <div class="form-group">
-                    <label for="nombre">Nombre:</label>
-                    <input type="text" name="nombre" class="form-control form-control-sm" required>
-                </div>
-                <div class="form-group">
-                    <label for="apellido">Apellido:</label>
-                    <input type="text" name="apellido" class="form-control form-control-sm" required>
-                </div>
-                <div class="form-group">
-                    <label for="dni">DNI:</label>
-                    <input type="text" name="dni" class="form-control form-control-sm" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input type="email" name="email" class="form-control form-control-sm" required>
-                </div>
-                <div class="form-group">
-                    <label for="telefono">Teléfono:</label>
-                    <input type="text" name="telefono" class="form-control form-control-sm" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Contraseña:</label>
-                    <input type="password" name="password" class="form-control form-control-sm" required>
-                </div>
-                <div class="form-group">
-                    <label for="rol">Rol:</label>
-                    <select name="rol" class="form-control form-control-sm" required>
-                        <option value="docente">Docente</option>
-                        <option value="administrador">Administrador</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="isla">Isla:</label>
-                    <select name="isla" class="form-control form-control-sm">
-                        <option value="Tenerife">Tenerife</option>
-                        <option value="Gran Canaria">Gran Canaria</option>
-                        <option value="Lanzarote">Lanzarote</option>
-                        <option value="Fuerteventura">Fuerteventura</option>
-                        <option value="La Palma">La Palma</option>
-                        <option value="La Gomera">La Gomera</option>
-                        <option value="El Hierro">El Hierro</option>
-                        <option value="La Graciosa">La Graciosa</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="disponibilidad">Disponibilidad:</label>
-                    <select name="disponibilidad" class="form-control form-control-sm">
-                        <option value="1">Disponible</option>
-                        <option value="0">No Disponible</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="puntuacion">Puntuación:</label>
-                    <input type="number" name="puntuacion" class="form-control form-control-sm" step="0.01" required>
-                </div>
-                <button type="submit" class="btn btn-success">Guardar</button>
+
+<!-- ===========================================
+     SECCIÓN DE USUARIOS
+     =========================================== -->
+<section>
+  <h3>Usuarios</h3>
+
+  <!-- Botones de acción y ordenación -->
+  <div class="d-flex flex-wrap justify-content-center gap-2 mb-3">
+    <!-- Nuevo usuario (abre formulario) -->
+    <button class="btn btn-primary" id="btnNuevoUsuario">
+      Nuevo Usuario
+    </button>
+    <!-- Ordenar alfabéticamente -->
+    <a href="?sort=nombre&order=<?= $nextName ?>" class="btn btn-secondary">
+      A-Z <?= $sort==='nombre' ? ($order==='asc' ? '↑' : '↓') : '' ?>
+    </a>
+    <!-- Ordenar por puntuación -->
+    <a href="?sort=puntuacion&order=<?= $nextPunt ?>" class="btn btn-secondary">
+      Puntuación <?= $sort==='puntuacion' ? ($order==='asc' ? '↑' : '↓') : '' ?>
+    </a>
+    <!-- Ordenar por fecha de creación -->
+    <a href="?sort=fecha_creacion&order=<?= $nextFecha ?>" class="btn btn-secondary">
+      Fecha creación <?= $sort==='fecha_creacion' ? ($order==='asc' ? '↑' : '↓') : '' ?>
+    </a>
+  </div>
+
+  <!-- ===========================================
+       FORMULARIO OCULTO DE CREAR/EDITAR
+       =========================================== -->
+  <div id="formularioUsuario"
+       class="mt-3"
+       style="display:none; max-width:800px; margin:auto;">
+    <form id="formUsuario"
+          action="../controllers/UsuarioController.php"
+          method="POST">
+      <!-- Indica acción: 'crear' o 'editar' -->
+      <input type="hidden" name="action" id="formAction" value="crear">
+      <!-- ID de usuario (para editar) -->
+      <input type="hidden" name="id_usuario" id="formIdUsuario" value="">
+
+      <!-- Nombre -->
+      <div class="form-group">
+        <label for="formNombre">Nombre:</label>
+        <input type="text"
+               id="formNombre"
+               name="nombre"
+               class="form-control form-control-sm"
+               required>
+      </div>
+
+      <!-- Apellido -->
+      <div class="form-group">
+        <label for="formApellido">Apellido:</label>
+        <input type="text"
+               id="formApellido"
+               name="apellido"
+               class="form-control form-control-sm"
+               required>
+      </div>
+
+      <!-- DNI -->
+      <div class="form-group">
+        <label for="formDni">DNI:</label>
+        <input type="text"
+               id="formDni"
+               name="dni"
+               class="form-control form-control-sm"
+               required>
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="formEmail">Email:</label>
+        <input type="email"
+               id="formEmail"
+               name="email"
+               class="form-control form-control-sm"
+               required>
+      </div>
+
+      <!-- Teléfono -->
+      <div class="form-group">
+        <label for="formTelefono">Teléfono:</label>
+        <input type="text"
+               id="formTelefono"
+               name="telefono"
+               class="form-control form-control-sm">
+      </div>
+
+      <!-- Contraseña -->
+      <div class="form-group">
+        <label for="formPassword">Contraseña:</label>
+        <input type="password"
+               id="formPassword"
+               name="password"
+               class="form-control form-control-sm"
+               placeholder="Obligatorio al crear, opcional al editar">
+      </div>
+
+      <!-- Rol -->
+      <div class="form-group">
+        <label for="formRol">Rol:</label>
+        <select id="formRol"
+                name="rol"
+                class="form-control form-control-sm"
+                required>
+          <option value="docente">Docente</option>
+          <option value="administrador">Administrador</option>
+        </select>
+      </div>
+
+      <!-- Isla -->
+      <div class="form-group">
+        <label for="formIsla">Isla:</label>
+        <select id="formIsla"
+                name="isla"
+                class="form-control form-control-sm">
+          <option value="">— Selecciona —</option>
+          <option value="Tenerife">Tenerife</option>
+          <option value="Gran Canaria">Gran Canaria</option>
+          <option value="Lanzarote">Lanzarote</option>
+          <option value="Fuerteventura">Fuerteventura</option>
+          <option value="La Palma">La Palma</option>
+          <option value="La Gomera">La Gomera</option>
+          <option value="El Hierro">El Hierro</option>
+          <option value="La Graciosa">La Graciosa</option>
+        </select>
+      </div>
+
+      <!-- Disponibilidad -->
+      <div class="form-group">
+        <label for="formDisponibilidad">Disponibilidad:</label>
+        <select id="formDisponibilidad"
+                name="disponibilidad"
+                class="form-control form-control-sm">
+          <option value="1">Disponible</option>
+          <option value="0">No Disponible</option>
+        </select>
+      </div>
+
+      <!-- Puntuación -->
+      <div class="form-group">
+        <label for="formPuntuacion">Puntuación:</label>
+        <input type="number"
+               id="formPuntuacion"
+               name="puntuacion"
+               class="form-control form-control-sm"
+               step="0.01">
+      </div>
+
+      <!-- Botones Crear/Actualizar y Cancelar -->
+      <div class="mt-3 d-flex gap-2">
+        <button type="submit"
+                id="formSubmit"
+                class="btn btn-success">
+          Guardar
+        </button>
+        <button type="button"
+                id="formCancel"
+                class="btn btn-secondary">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ===========================================
+       TABLA DE USUARIOS
+       =========================================== -->
+    <div class="table-responsive w-100 mb-4">
+      <table class="table">
+        <tr>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Apellido</th>
+      <th>DNI/NIE</th>
+      <th>Email</th>
+      <th>Teléfono</th>
+      <th>Rol</th>
+      <th>Disponibilidad</th>
+      <th>Isla</th>
+      <th>Puntuación</th>
+      <th>Puesto</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php foreach ($usuarios as $u): ?>
+    <tr data-id="<?= $u['id_usuario'] ?>"
+        data-nombre="<?= htmlspecialchars($u['nombre']) ?>"
+        data-apellido="<?= htmlspecialchars($u['apellido']) ?>"
+        data-dni="<?= htmlspecialchars($u['dni']) ?>"
+        data-email="<?= htmlspecialchars($u['email']) ?>"
+        data-telefono="<?= htmlspecialchars($u['telefono']) ?>"
+        data-rol="<?= $u['rol'] ?>"
+        data-disponibilidad="<?= $u['disponibilidad'] ?>"
+        data-isla="<?= htmlspecialchars($u['isla']) ?>"
+        data-puntuacion="<?= htmlspecialchars($u['puntuacion']) ?>">
+      <td><?= $u['id_usuario'] ?></td>
+      <td><?= htmlspecialchars($u['nombre']) ?></td>
+      <td><?= htmlspecialchars($u['apellido']) ?></td>
+      <td><?= htmlspecialchars($u['dni']) ?></td>
+      <td><?= htmlspecialchars($u['email']) ?></td>
+      <td><?= htmlspecialchars($u['telefono']) ?></td>
+      <td><?= htmlspecialchars($u['rol']) ?></td>
+      <td><?= $u['disponibilidad'] ? 'Disponible' : 'No Disponible' ?></td>
+      <td><?= htmlspecialchars($u['isla']) ?></td>
+      <td><?= htmlspecialchars($u['puntuacion']) ?></td>
+      <td><?= $usuarioModel->obtenerPuestoEnLista($u['id_usuario']) ?></td>
+      <td>
+            <!-- EDITAR: botón que abre el formulario con datos -->
+            <button type="button"
+                    class="btn btn-light border btn-editar">
+              <img src="../assets/icons/editar.png"
+                   alt="Editar"
+                   width="20">
+            </button>
+
+            <!-- ELIMINAR: formulario POST con confirm -->
+            <form action="../controllers/UsuarioController.php"
+                  method="POST"
+                  class="d-inline"
+                  onsubmit="return confirm('¿Eliminar este usuario?');">
+              <input type="hidden" name="action" value="eliminar">
+              <input type="hidden" name="id_usuario" value="<?= $u['id_usuario'] ?>">
+              <button type="submit" class="btn btn-light border">
+                <img src="../assets/icons/eliminar.png"
+                     alt="Eliminar"
+                     width="20">
+              </button>
             </form>
-        </div>
+          </td>
+        </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+  </div>
+</section>
 
-        <!-- Tabla de Usuarios -->
-        <div class="table-responsive w-100 mb-4">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Apellido</th>
-                        <th>DNI/NIE</th>
-                        <th>Email</th>
-                        <th>Disponibilidad</th>
-                        <th>Isla</th>
-                        <th>Puntuación</th>
-                        <th>Puesto</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($usuarios as $u): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($u['id_usuario']) ?></td>
-                        <td><?= htmlspecialchars($u['nombre']) ?></td>
-                        <td><?= htmlspecialchars($u['apellido']) ?></td>
-                        <td><?= htmlspecialchars($u['dni']) ?></td>
-                        <td><?= htmlspecialchars($u['email']) ?></td>
-                        <td><?= $u['disponibilidad'] ? 'Disponible' : 'No Disponible' ?></td>
-                        <td><?= htmlspecialchars($u['isla']) ?></td>
-                        <td><?= htmlspecialchars($u['puntuacion']) ?></td>
-                        <td><?= $usuarioModel->obtenerPuestoEnLista($u['id_usuario']) ?></td>
-                        <td>
-                            <form action="../controllers/UsuarioController.php" method="POST" class="d-inline">
-                                <input type="hidden" name="action" value="editar">
-                                <input type="hidden" name="id_usuario" value="<?= $u['id_usuario'] ?>">
-                                <button type="submit" class="btn btn-light border">
-                                    <img src="../assets/icons/editar.png" alt="Editar" width="20">
-                                </button>
-                            </form>
-                            <form action="../controllers/UsuarioController.php" method="POST" class="d-inline" onsubmit="return confirm('¿Eliminar este usuario?');">
-                                <input type="hidden" name="action" value="eliminar">
-                                <input type="hidden" name="id_usuario" value="<?= $u['id_usuario'] ?>">
-                                <button type="submit" class="btn btn-light border">
-                                    <img src="../assets/icons/eliminar.png" alt="Eliminar" width="20">
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-    </section>
 
-        <!-- Sección de Noticias -->
-        <section>
-            <h3>Noticias</h3>
-        <!-- Botón para mostrar el formulario de nueva noticia -->
-            <button id="btnNuevaNoticia" class="btn btn-primary">Nueva Noticia</button>
-            
-            <!-- Formulario para agregar una nueva noticia (oculto) -->
-            <div id="formularioNoticia" class="mt-3" style="display: none;">
-                <form action="../controllers/NoticiaController.php" method="POST">
-                    <input type="hidden" name="accion" value="agregar">
-                    <input type="hidden" name="autor_id" value="<?= $_SESSION['id_usuario']; ?>">
-                    <div class="mb-2">
-                        <label for="titulo">Título:</label>
-                        <input type="text" name="titulo" class="form-control">
-                    </div>
-                    <div class="mb-2">
-                        <label for="contenido">Contenido:</label>
-                        <textarea name="contenido" class="form-control"></textarea>
-                    </div>
-                    <div class="mb-2">
-                        <label for="imagen">URL de Imagen:</label>
-                        <input type="text" name="imagen_url" class="form-control">
-                    </div>
-                    <button type="submit" class="btn btn-success">Guardar</button>
-                    <button type="button" id="btnCancelar" class="btn btn-secondary">Cancelar</button>
-                </form>
-            </div>
-            <div class="table-responsive w-100 mb-4">
-                <table class="table">
-                    <thead>
-                        <tr><th>Título</th><th>Contenido</th><th>Imagen</th><th>Fecha</th><th>Acciones</th></tr>
-                    </thead>
-                    <tbody>
-                    <?php foreach ($noticias as $n): ?>
-                        <tr>
-                            <td><?= htmlspecialchars($n['titulo']); ?></td>
-                            <td><?= htmlspecialchars(substr($n['contenido'],0,100)) . '...'; ?></td>
-                            <td><?= basename($n['imagen_url']); ?></td>
-                            <td><?= htmlspecialchars($n['fecha']); ?></td>
-                            <td class="text-center">
-                                <form action="../controllers/NoticiaController.php" method="POST" class="d-inline">
-                                    <input type="hidden" name="accion" value="eliminar">
-                                    <input type="hidden" name="id_noticia" value="<?= $n['id_noticia']; ?>">
-                                    <button type="submit" class="btn btn-light border" onclick="return confirm('¿Eliminar noticia?');">
-                                        <img src="../assets/icons/eliminar.png" alt="Eliminar" width="20">
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-        </section>
+<!-- ===========================================
+     SECCIÓN DE NOTICIAS
+     =========================================== -->
+<section id="noticias">
+  <h3>Noticias</h3>
 
-        <!-- Sección de Adjudicaciones -->
+  <!-- ╔═════════════════════════════════════════╗ -->
+  <!-- ║   BOTÓN NUEVA NOTICIA (abre formulario) ║ -->
+  <!-- ╚═════════════════════════════════════════╝ -->
+  <div class="d-flex flex-wrap justify-content-center gap-2 mb-3">
+    <button class="btn btn-primary" id="btnNuevaNoticia">
+      Nueva Noticia
+    </button>
+  </div>
+
+  <!-- ╔═════════════════════════════════════════╗ -->
+  <!-- ║   FORMULARIO OCULTO CREAR / EDITAR      ║ -->
+  <!-- ╚═════════════════════════════════════════╝ -->
+  <div id="formularioNoticia"
+       class="mt-3"
+       style="display:none; max-width:800px; margin:auto;">
+    <form id="formNoticia"
+          action="../controllers/NoticiaController.php"
+          method="POST">
+      <input type="hidden" name="action" id="formNoticiaAction" value="crear">
+      <input type="hidden" name="id_noticia" id="formIdNoticia" value="">
+
+      <!-- Título -->
+      <div class="form-group">
+        <label for="formTitulo">Título:</label>
+        <input type="text"
+               id="formTitulo"
+               name="titulo"
+               class="form-control form-control-sm"
+               required>
+      </div>
+
+      <!-- Contenido -->
+      <div class="form-group">
+        <label for="formContenido">Contenido:</label>
+        <textarea id="formContenido"
+                  name="contenido"
+                  class="form-control form-control-sm"
+                  rows="4"
+                  required></textarea>
+      </div>
+
+      <!-- Ruta de imagen -->
+      <div class="form-group">
+        <label for="formImagen">Imagen (URL o ruta):</label>
+        <input type="text"
+               id="formImagen"
+               name="imagen_url"
+               class="form-control form-control-sm"
+               placeholder="e.g. /assets/img/noticia.jpg">
+      </div>
+
+      <!-- Botones Guardar y Cancelar -->
+      <div class="mt-3 d-flex gap-2">
+        <button type="submit"
+                id="formSubmitNoticia"
+                class="btn btn-success">
+          Guardar
+        </button>
+        <button type="button"
+                id="formCancelNoticia"
+                class="btn btn-secondary">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+
+<!-- ╔═════════════════════════════════════════╗ -->
+<!-- ║         TABLA DE NOTICIAS               ║ -->
+<!-- ╚═════════════════════════════════════════╝ -->
+<div class="table-responsive w-100 mb-4">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Título</th>
+        <th>Contenido</th>
+        <th>Imagen</th>
+        <th>Fecha Creación</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php foreach ($noticias as $n): ?>
+      <tr
+        data-id="<?= $n['id_noticia'] ?>"
+        data-titulo="<?= htmlspecialchars($n['titulo']) ?>"
+        data-contenido="<?= htmlspecialchars($n['contenido']) ?>"
+        data-imagen_url="<?= htmlspecialchars($n['imagen_url']) ?>"
+        data-fecha="<?= htmlspecialchars($n['fecha']) ?>" 
+      >
+        <td><?= $n['id_noticia'] ?></td>
+        <td><?= htmlspecialchars($n['titulo']) ?></td>
+        <td><?= nl2br(htmlspecialchars($n['contenido'])) ?></td>
+        <td>
+          <?php if (!empty($n['imagen_url'])): ?>
+            <img src="<?= htmlspecialchars($n['imagen_url']) ?>"
+                 alt="Imagen noticia"
+                 style="max-height:50px;">
+          <?php endif; ?>
+        </td>
+        <td><?= htmlspecialchars($n['fecha']) ?></td>
+        <td>
+          <!-- EDITAR NOTICIA -->
+          <button type="button"
+                  class="btn btn-light border btn-editar-noticia">
+            <img src="../assets/icons/editar.png"
+                 alt="Editar"
+                 width="20">
+          </button>
+          <!-- ELIMINAR NOTICIA -->
+          <form action="../controllers/NoticiaController.php"
+                method="POST"
+                class="d-inline"
+                onsubmit="return confirm('¿Eliminar esta noticia?');">
+            <input type="hidden" name="action" value="eliminar">
+            <input type="hidden" name="id_noticia" value="<?= $n['id_noticia'] ?>">
+            <button type="submit" class="btn btn-light border">
+              <img src="../assets/icons/eliminar.png"
+                   alt="Eliminar"
+                   width="20">
+            </button>
+          </form>
+        </td>
+      </tr>
+      <?php endforeach; ?>
+    </tbody>
+  </table>
+</div>
+</section>
+   
+  <!-- ===========================================
+       TABLA DE ADJUDICACIONES
+       =========================================== -->
         <section>
             <h3>Adjudicaciones</h3>
             <div class="table-responsive w-100 mb-4">
@@ -280,7 +477,10 @@ $solicitudes    = $solicitudModel->obtenerTodasSolicitudes();
             </div>
         </section>
 
-        <!-- Sección de Solicitudes -->
+        
+  <!-- ===========================================
+       TABLA DE SOLICITUDES
+       =========================================== -->
         <section>
             <h3>Solicitudes</h3>
             <div class="table-responsive w-100 mb-4">

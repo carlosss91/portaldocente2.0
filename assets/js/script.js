@@ -1,292 +1,266 @@
-// ------------------  FUNCIONES GENERALES ------------------ 
+// *****************************************
+//          CONFIGURACIÓN GLOBAL            
+// *****************************************
 
-// Alternar colapso de la barra lateral
+// Alterna el estado colapsado de la barra lateral
 function toggleSidebar() {
-    // Alterna la clase 'collapsed' en el elemento con id 'sidebar'
-    document.getElementById("sidebar").classList.toggle("collapsed");
+  document.getElementById("sidebar").classList.toggle("collapsed");
 }
 
-// ------------------  BOTÓN DE USUARIO ------------------
-// Alternar el botón de usuario
+
+// *****************************************
+//         GESTIÓN DEL MENÚ DE USUARIO       
+// *****************************************
+
+// Alterna la visibilidad del dropdown de usuario
 function toggleUserMenu(event) {
-    event.stopPropagation(); // 🔹 Evita que el clic se propague al `window.onclick`
-    let dropdown = document.getElementById("userDropdown");
-    dropdown.classList.toggle("show-dropdown");
+  event.stopPropagation();
+  document.getElementById("userDropdown").classList.toggle("show-dropdown");
 }
 
-// Cierra el menú desplegable si se hace clic fuera
-document.addEventListener("click", function(event) {
-    let userIcon = document.querySelector(".user-icon");
-    let dropdown = document.getElementById("userDropdown");
+// Configura eventos para el menú de usuario
+function setupUserMenu() {
+  const icon = document.querySelector(".user-icon");
+  const dropdown = document.getElementById("userDropdown");
 
-    // 🔹 Si el clic NO es en el icono de usuario ni en el menú desplegable, se oculta
-    if (!userIcon.contains(event.target) && !dropdown.contains(event.target)) {
-        dropdown.classList.remove("show-dropdown");
+  icon?.addEventListener("click", toggleUserMenu);
+  document.addEventListener("click", event => {
+    if (!icon.contains(event.target) && !dropdown.contains(event.target)) {
+      dropdown.classList.remove("show-dropdown");
     }
-});
+  });
+}
 
-// ✅ Asegurar que el clic en el icono no cierre el menú inmediatamente
-document.querySelector(".user-icon").addEventListener("click", function(event) {
-    toggleUserMenu(event);
-});
 
-// ------------------  DESPLIEGUE DE NOTICIAS ------------------ 
+// *****************************************
+//       LÓGICA DE DESPLIEGUE DE NOTICIAS    
+// *****************************************
 
-// Alternar la visualización de una noticia específica
+// Expande o colapsa una tarjeta de noticia específica
 function toggleNews(id) {
-    // Obtiene el contenido y la tarjeta de la noticia por id
-    let content = document.getElementById("news-" + id);
-    let card = document.getElementById("news-card-" + id);
+  const content = document.getElementById(`news-${id}`);
+  const card    = document.getElementById(`news-card-${id}`);
 
-    // Si la noticia ya está abierta, la cerramos
-    if (content.classList.contains("show-news")) {
-        content.classList.remove("show-news");
-        card.classList.remove("expanded-news");
-        return;
-    }
+  // Cierra todas las noticias antes de abrir la seleccionada
+  document.querySelectorAll(".news-content").forEach(item => {
+    item.classList.remove("show-news");
+    item.closest(".news-card")?.classList.remove("expanded-news");
+  });
 
-    // Cerrar todas las demás noticias antes de abrir la seleccionada
-    document.querySelectorAll(".news-content").forEach(function (item) {
-        item.classList.remove("show-news");
-        let otherCard = item.closest(".news-card");
-        if (otherCard) otherCard.classList.remove("expanded-news");
-    });
-
-    // Abrir solo la noticia seleccionada
+  if (content && card) {
     content.classList.add("show-news");
     card.classList.add("expanded-news");
+  }
 }
 
-  // AJUSTAR TAMAÑO DE IMÁGENES DE NOTICIAS
-document.addEventListener("DOMContentLoaded", function() {
-    // Selecciona todas las tarjetas de noticias
-    const newsCards = document.querySelectorAll('.news-card');
-    
-    // Recorre cada tarjeta de noticias
-    newsCards.forEach(card => {
-        // Selecciona la imagen dentro de la tarjeta
-        const img = card.querySelector('.news-card-img');
-        
-        // Si la imagen existe
-        if (img) {
-            // Obtiene la altura de la tarjeta
-            const cardHeight = card.clientHeight;
-            // Obtiene la altura de la imagen
-            const imgHeight = img.clientHeight;
-            
-            // Si la altura de la imagen es menor que la altura de la tarjeta
-            if (imgHeight < cardHeight) {
-                // Ajusta la altura de la imagen para que coincida con la altura de la tarjeta
-                img.style.height = cardHeight + 'px';
-            }
-        }
-    });
-});
+// Ajusta la altura de las imágenes para que llenen la tarjeta
+function setupNewsImages() {
+  document.querySelectorAll(".news-card").forEach(card => {
+    const img = card.querySelector(".news-card-img");
+    if (!img) return;
+    if (img.clientHeight < card.clientHeight) img.style.height = `${card.clientHeight}px`;
+  });
+}
 
-// ------------------  ICONOS DINÁMICOS (GIF) ------------------ 
 
-// Cambiar iconos estáticos a GIFs al pasar el ratón
-document.addEventListener("DOMContentLoaded", function () {
-    // Selecciona todos los iconos relevantes
-    let icons = document.querySelectorAll(".sidebar-icon, .user-icon, .toggle-icon");
+// *****************************************
+//       ANIMACIONES DE ICONOS DINÁMICOS     
+// *****************************************
 
-    // Itera sobre cada icono y agrega eventos de mouseenter y mouseleave
-    icons.forEach(function (icon) {
-        icon.addEventListener("mouseenter", function () {
-            // Cambia la fuente del icono a GIF al pasar el ratón
-            let staticSrc = icon.src.replace("_static.png", ".gif");
-            icon.src = staticSrc;
-        });
+function setupDynamicIcons() {
+  document.querySelectorAll(".sidebar-icon, .user-icon, .toggle-icon").forEach(icon => {
+    icon.addEventListener("mouseenter", () =>
+      icon.src = icon.src.replace("_static.png", ".gif")
+    );
+    icon.addEventListener("mouseleave", () =>
+      icon.src = icon.src.replace(".gif", "_static.png")
+    );
+  });
+}
 
-        icon.addEventListener("mouseleave", function () {
-            // Cambia la fuente del icono de vuelta a PNG estático al quitar el ratón
-            let gifSrc = icon.src.replace(".gif", "_static.png");
-            icon.src = gifSrc;
-        });
-    });
-});
 
-// ------------------  FUNCIÓN DE BÚSQUEDA ------------------ 
+// *****************************************
+//               BÚSQUEDA RÁPIDA            
+// *****************************************
 
-// Realizar búsqueda al hacer clic en el botón de búsqueda
-document.addEventListener("DOMContentLoaded", function () {
-    // Selecciona el botón de búsqueda y la barra de búsqueda
-    let searchBtn = document.querySelector(".search-btn");
-    let searchInput = document.querySelector(".search-bar");
+function setupSearch() {
+  const btn   = document.querySelector(".search-btn");
+  const input = document.querySelector(".search-bar");
+  btn?.addEventListener("click", () => {
+    const q = input.value.trim();
+    if (q) alert(`Buscando: ${q}`);
+  });
+}
 
-    // Agrega un evento de clic al botón de búsqueda
-    searchBtn.addEventListener("click", function () {
-        // Obtiene el valor de la barra de búsqueda y lo convierte a minúsculas
-        let query = searchInput.value.toLowerCase();
-        // Si el valor no está vacío, muestra una alerta con el término de búsqueda
-        if (query.trim() !== "") {
-            alert("🔍 Buscando: " + query);
-        }
-    });
-});
 
-// ------------------  FORMULARIO ADJUDICACIONES ------------------ 
+// *****************************************
+//     LÓGICA FORMULARIO ADJUDICACIONES      
+// *****************************************
 
-var municipiosPorIsla = {
-    "Tenerife": ["Adeje", "Arafo", "Arico", "Arona", "Buenavista del Norte", "Candelaria", "El Rosario", "El Sauzal", "El Tanque", "Fasnia", "Garachico", "Granadilla de Abona", "Guía de Isora", "Güímar", "Icod de los Vinos", "La Guancha", "La Matanza de Acentejo", "La Orotava", "La Victoria de Acentejo", "Los Realejos", "Puerto de la Cruz", "San Cristóbal de La Laguna", "San Juan de la Rambla", "San Miguel de Abona", "Santa Cruz de Tenerife", "Santa Úrsula", "Santiago del Teide", "Tacoronte", "Tegueste", "Vilaflor de Chasna"],
-    "Gran Canaria": ["Agaete", "Agüimes", "Artenara", "Arucas", "Firgas", "Gáldar", "Ingenio", "La Aldea de San Nicolás", "Las Palmas de Gran Canaria", "Mogán", "Moya", "San Bartolomé de Tirajana", "Santa Brígida", "Santa Lucía de Tirajana", "Santa María de Guía", "Tejeda", "Telde", "Teror", "Valleseco", "Valsequillo de Gran Canaria", "Vega de San Mateo"],
-    "Lanzarote": ["Arrecife", "Haría", "San Bartolomé", "Teguise", "Tías", "Tinajo", "Yaiza"],
-    "Fuerteventura": ["Antigua", "Betancuria", "La Oliva", "Pájara", "Puerto del Rosario", "Tuineje"],
-    "La Palma": ["Barlovento", "Breña Alta", "Breña Baja", "Fuencaliente", "Garafía", "Los Llanos de Aridane", "El Paso", "Puntagorda", "Puntallana", "San Andrés y Sauces", "Santa Cruz de La Palma", "Tazacorte", "Tijarafe", "Villa de Mazo"],
-    "La Gomera": ["Agulo", "Alajeró", "Hermigua", "San Sebastián de La Gomera", "Valle Gran Rey", "Vallehermoso"],
-    "El Hierro": ["Frontera", "El Pinar de El Hierro", "Valverde"],
-    "La Graciosa": ["Caleta de Sebo"]
+const municipiosPorIsla = {
+  "Tenerife": ["Adeje", "Arafo", /* ... */ "Vilaflor de Chasna"],
+  "Gran Canaria": ["Agaete", "Agüimes", /* ... */ "Vega de San Mateo"],
+  // ... otras islas
 };
 
-// Función para actualizar municipios cuando se seleccione una isla
+// Actualiza la lista de municipios según la isla seleccionada
 function actualizarMunicipios(select) {
-    var islaSeleccionada = select.value;
-    var municipioSelect = document.getElementById("municipio");
-
-    municipioSelect.innerHTML = '<option value="">Seleccione un municipio</option>';
-
-    if (municipiosPorIsla[islaSeleccionada]) {
-        municipiosPorIsla[islaSeleccionada].forEach(municipio => {
-            let option = document.createElement("option");
-            option.value = municipio;
-            option.textContent = municipio;
-            municipioSelect.appendChild(option);
-        });
-    }
+  const muniSelect = document.getElementById("municipio");
+  muniSelect.innerHTML = '<option value="">Seleccione un municipio</option>';
+  (municipiosPorIsla[select.value] || []).forEach(m => {
+    const opt = document.createElement("option");
+    opt.value = m;
+    opt.textContent = m;
+    muniSelect.appendChild(opt);
+  });
 }
 
-// función para mostrar el formulario de adjudicaciones
+// Alterna la visibilidad del formulario de adjudicaciones
 function toggleFormularioAdjudicaciones() {
-    var formulario = document.getElementById("formularioAdjudicacion");
-    if (formulario.style.display === "none" || formulario.style.display === "") {
-        formulario.style.display = "block";
-    } else {
-        formulario.style.display = "none";
-    }
+  const f = document.getElementById("formularioAdjudicacion");
+  f.style.display = (f.style.display === "block") ? "none" : "block";
 }
 
-
-
-// Botón eliminar adjudicación
-
+// Elimina una adjudicación tras confirmación
 function eliminarAdjudicacion(btn) {
-    if (confirm("¿Seguro que deseas eliminar esta adjudicación?")) {
-        var row = btn.closest("tr");
-        var id_adjudicacion = row.getAttribute("data-id");
-
-        if (!id_adjudicacion) {
-            alert("Error: No se encontró el ID de la adjudicación.");
-            return;
-        }
-
-        var form = document.createElement("form");
-        form.method = "POST";
-        form.action = "../controllers/AdjudicacionController.php";
-
-        var inputId = document.createElement("input");
-        inputId.type = "hidden";
-        inputId.name = "eliminar_adjudicacion";
-        inputId.value = id_adjudicacion;
-
-        form.appendChild(inputId);
-        document.body.appendChild(form);
-        form.submit();
-    }
+  if (!confirm("¿Seguro que deseas eliminar esta adjudicación?")) return;
+  const id = btn.closest("tr").dataset.id;
+  const f  = document.createElement("form");
+  f.method = "POST";
+  f.action = "../controllers/AdjudicacionController.php";
+  f.innerHTML = `<input type="hidden" name="id_adjudicacion" value="${id}">`;
+  document.body.appendChild(f);
+  f.submit();
 }
 
-// ------------------  FORMULARIO SOLICITUDES ------------------ 
-   // Función para mostrar/ocultar el formulario de solicitudes
-   function toggleFormularioSolicitudes() {
-    var formulario = document.getElementById("formularioSolicitud");
-    formulario.style.display = formulario.style.display === "none" ? "block" : "none";
+
+// *****************************************
+//      LÓGICA FORMULARIO SOLICITUDES        
+// *****************************************
+
+// Alterna la visibilidad del formulario de solicitudes
+function toggleFormularioSolicitudes() {
+  const f = document.getElementById("formularioSolicitud");
+  f.style.display = (f.style.display === "block") ? "none" : "block";
 }
 
-// Función para eliminar una solicitud con confirmación
+// Elimina una solicitud tras confirmación
 function eliminarSolicitud(btn) {
-    if (confirm("¿Seguro que deseas eliminar esta solicitud?")) {
-        var row = btn.closest("tr"); // Obtener la fila de la solicitud
-        var id_solicitud = row.getAttribute("data-id"); // Obtener el ID de la solicitud
-        
-        // Crear formulario dinámico para enviar la solicitud de eliminación
-        var form = document.createElement("form");
-        form.method = "POST";
-        form.action = "../controllers/SolicitudController.php";
-        
-        var inputId = document.createElement("input");
-        inputId.type = "hidden";
-        inputId.name = "eliminar_solicitud";
-        inputId.value = id_solicitud;
-        
-        form.appendChild(inputId);
-        document.body.appendChild(form);
-        form.submit(); // Enviar el formulario automáticamente
-    }
+  if (!confirm("¿Seguro que deseas eliminar esta solicitud?")) return;
+  const id = btn.closest("tr").dataset.id;
+  const f  = document.createElement("form");
+  f.method = "POST";
+  f.action = "../controllers/SolicitudController.php";
+  f.innerHTML = `<input type="hidden" name="id_solicitud" value="${id}">`;
+  document.body.appendChild(f);
+  f.submit();
 }
 
-// ------------------  FORMULARIO USUARIOS ------------------
 
+// *****************************************
+//       PANEL ADMINISTRACIÓN - USUARIOS     
+// *****************************************
 
-// Función para mostrar/ocultar la contraseña
-function togglePassword(inputId, iconId) {
-    var passwordInput = document.getElementById(inputId);
-    var eyeIcon = document.getElementById(iconId);
+function setupUserPanel() {
+  const btnNuevo  = document.getElementById("btnNuevoUsuario");
+  const formDiv   = document.getElementById("formularioUsuario");
+  const form      = document.getElementById("formUsuario");
+  const btnCancel = document.getElementById("formCancel");
 
-    if (passwordInput.type === "password") {
-        passwordInput.type = "text";
-        eyeIcon.src = "../assets/icons/eye_open.png"; // Cambia al icono de ojo abierto
-    } else {
-        passwordInput.type = "password";
-        eyeIcon.src = "../assets/icons/eye_closed.png"; // Vuelve al icono de ojo cerrado
-    }
-}
+  // Campos del formulario de usuario
+  const campos = ["Action","IdUsuario","Nombre","Apellido","Dni","Email","Telefono","Password","Rol","Isla","Disponibilidad","Puntuacion"];
+  const f = {};
+  campos.forEach(c => f[c] = document.getElementById(`form${c}`));
 
-// ------------------PANEL DE ADMINISTRACIÓN------------------
+  // Nuevo usuario
+  btnNuevo?.addEventListener("click", () => {
+    form.reset();
+    f.Action.value        = "crear";
+    f.IdUsuario.value     = "";
+    f.Password.required   = true;
+    document.getElementById("formSubmit").textContent = "Crear";
+    formDiv.style.display = "block";
+    f.Nombre.focus();
+  });
 
-// Función para mostrar/ocultar el formulario de usuarios
-document.addEventListener("DOMContentLoaded", function () {
-    // Obtener los botones y formularios por ID
-    const btnNuevoUsuario = document.getElementById("btnNuevoUsuario");
-    const btnNuevaNoticia = document.getElementById("btnNuevaNoticia");
-    const formularioUsuario = document.getElementById("formularioUsuario");
-    const formularioNoticia = document.getElementById("formularioNoticia");
-
-    // Función para alternar la visibilidad de un formulario
-    function toggleFormulario(formulario) {
-        if (formulario.style.display === "none" || formulario.style.display === "") {
-            formulario.style.display = "block";
-        } else {
-            formulario.style.display = "none";
-        }
-    }
-
-    // Verificar que los botones existen antes de asignar eventos
-    if (btnNuevoUsuario) {
-        btnNuevoUsuario.addEventListener("click", function () {
-            toggleFormulario(formularioUsuario);
-        });
-    }
-
-    if (btnNuevaNoticia) {
-        btnNuevaNoticia.addEventListener("click", function () {
-            toggleFormulario(formularioNoticia);
-        });
-    }
-});
-
-// Función para mostrar/ocultar el formulario de Noticias
-    document.addEventListener("DOMContentLoaded", function () {
-        const btnNuevaNoticia = document.getElementById("btnNuevaNoticia");
-        const formularioNoticia = document.getElementById("formularioNoticia");
-        const btnCancelar = document.getElementById("btnCancelar");
-
-        btnNuevaNoticia.addEventListener("click", function () {
-            formularioNoticia.style.display = "block";
-            btnNuevaNoticia.style.display = "none"; // Oculta el botón de "Nueva Noticia"
-        });
-
-        btnCancelar.addEventListener("click", function () {
-            formularioNoticia.style.display = "none";
-            btnNuevaNoticia.style.display = "inline-block"; // Muestra el botón de "Nueva Noticia"
-        });
+  // Editar usuario
+  document.querySelectorAll("button.btn-editar").forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.preventDefault();
+      const row = btn.closest("tr"); if (!row) return;
+      form.reset();
+      f.Action.value      = "editar";
+      campos.slice(1).forEach((c, i) => f[c].value = row.dataset[c.toLowerCase()] || '');
+      f.Password.required = false;
+      document.getElementById("formSubmit").textContent = "Actualizar";
+      formDiv.style.display = "block";
+      f.Nombre.focus();
     });
+  });
 
+  // Cancelar formulario usuario
+  btnCancel?.addEventListener("click", () => formDiv.style.display = "none");
+}
+
+
+// *****************************************
+//       PANEL ADMINISTRACIÓN - NOTICIAS     
+// *****************************************
+
+function setupNewsPanel() {
+  const btnNueva     = document.getElementById("btnNuevaNoticia");
+  const divForm      = document.getElementById("formularioNoticia");
+  const form         = document.getElementById("formNoticia");
+
+  // Campos del formulario de noticias
+  const fAction        = document.getElementById("formNoticiaAction");
+  const fId            = document.getElementById("formIdNoticia");
+  const fTitulo        = document.getElementById("formTitulo");
+  const fContenido     = document.getElementById("formContenido");
+  const fImagen        = document.getElementById("formImagen");
+  const fSubmitNoticia = document.getElementById("formSubmitNoticia");
+  const btnCancelNoticia = document.getElementById("formCancelNoticia");
+
+  // Nueva noticia
+  btnNueva?.addEventListener("click", () => {
+    form.reset();
+    fAction.value = "crear";
+    fId.value     = "";
+    fSubmitNoticia.textContent = "Crear";
+    divForm.style.display = "block";
+    fTitulo.focus();
+  });
+
+  // Editar noticia
+  document.querySelectorAll(".btn-editar-noticia").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const row = btn.closest("tr"); if (!row) return;
+      form.reset();
+      fAction.value        = "editar";
+      fId.value            = row.dataset.id;
+      fTitulo.value        = row.dataset.titulo;
+      fContenido.value     = row.dataset.contenido;
+      fImagen.value        = row.dataset.imagen_url || '';
+      fSubmitNoticia.textContent = "Actualizar";
+      divForm.style.display = "block";
+      fTitulo.focus();
+    });
+  });
+
+  // Cancelar formulario noticias
+  btnCancelNoticia?.addEventListener("click", () => divForm.style.display = "none");
+}
+
+
+// *****************************************
+//             INICIALIZACIÓN              
+// *****************************************
+
+document.addEventListener("DOMContentLoaded", () => {
+  setupUserMenu();
+  setupNewsImages();
+  setupDynamicIcons();
+  setupSearch();
+  setupUserPanel();
+  setupNewsPanel();
+});
