@@ -140,49 +140,66 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
     }
 
-    // ╔════════════════════════════╗
-    // ║   ACCIÓN: EDITAR USUARIO   ║
-    // ╚════════════════════════════╝
-    if ($action === "editar") {
-        try {
-            // Recoger todos los campos para actualizar
-            $id_usuario     = intval($_POST["id_usuario"]);
-            $nombre         = trim($_POST["nombre"]);
-            $apellido       = trim($_POST["apellido"]);
-            $dni            = trim($_POST["dni"]);
-            $email          = trim($_POST["email"]);
-            $telefono       = trim($_POST["telefono"] ?? '');
-            $rol            = trim($_POST["rol"]);
-            $disponibilidad = intval($_POST["disponibilidad"] ?? 1);
-            $isla           = trim($_POST["isla"] ?? '');
-            $puntuacion     = floatval($_POST["puntuacion"] ?? 0);
-            $password       = !empty($_POST["password"]) ? trim($_POST["password"]) : null;
+// ╔════════════════════════════╗
+// ║   ACCIÓN: EDITAR USUARIO   ║
+// ╚════════════════════════════╝
+if ($action === "editar") {
+    // DEBUG: Para ver qué campos llegan
+    error_log("POST en editar: ".print_r($_POST, true));
+    try {
+        // Recoger campos
+        $id_usuario     = intval($_POST["id_usuario"]);
+        $nombre         = trim($_POST["nombre"]);
+        $apellido       = trim($_POST["apellido"]);
+        $dni            = trim($_POST["dni"]);
+        $email          = trim($_POST["email"]);
+        $telefono       = trim($_POST["telefono"] ?? '');
+        $rol            = trim($_POST["rol"]);
+        $disponibilidad = intval($_POST["disponibilidad"] ?? 1);
+        $isla           = trim($_POST["isla"] ?? '');
+        $puntuacion     = floatval($_POST["puntuacion"] ?? 0);
 
-            // Llamada actualizada con todos los parámetros
-            $usuarioController->actualizarUsuario(
-                $id_usuario,
-                $nombre,
-                $apellido,
-                $dni,
-                $email,
-                $telefono,
-                $rol,
-                $disponibilidad,
-                $isla,
-                $puntuacion,
-                $password
-            );
-            header("Location: ../views/admin.php?success=usuario_actualizado");
-            exit();
-        } catch (PDOException $e) {
-            // Duplicados también al editar
-            if ($e->getCode() === '23000') {
-                header("Location: ../views/admin.php?error=usuario_duplicado");
+        // NUEVO: manejo de cambio de contraseña
+        $passNueva    = trim($_POST["password"] ?? '');
+        $passConfirm  = trim($_POST["password_confirm"] ?? '');
+        if ($passNueva !== '' || $passConfirm !== '') {
+            if ($passNueva !== $passConfirm) {
+                header("Location: ../views/usuario.php?error=pass_no_coincide");
                 exit();
             }
-            throw $e;
+            // Si coinciden, dejamos $password con el texto (el modelo hará el hash)
+            $password = $passNueva;
+        } else {
+            // No cambiar la clave
+            $password = null;
         }
+
+        // Llamada al modelo con el parámetro $password (raw si hay, o null)
+        $usuarioController->actualizarUsuario(
+            $id_usuario,
+            $nombre,
+            $apellido,
+            $dni,
+            $email,
+            $telefono,
+            $rol,
+            $disponibilidad,
+            $isla,
+            $puntuacion,
+            $password
+        );
+        header("Location: ../views/usuario.php?success=perfil_actualizado");
+        exit();
+    } catch (PDOException $e) {
+        // Manejo de duplicados, etc.
+        if ($e->getCode() === '23000') {
+            header("Location: ../views/usuario.php?error=datos_duplicados");
+            exit();
+        }
+        throw $e;
     }
+}
+
 
     // ╔════════════════════════════╗
     // ║   ACCIÓN: DESCONOCIDA      ║

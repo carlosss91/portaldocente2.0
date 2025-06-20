@@ -30,7 +30,18 @@ function setupUserMenu() {
     }
   });
 }
-
+ //Función para mostrar/ocultar contraseñas 
+    function togglePassword(fieldId, iconId) {
+        const field = document.getElementById(fieldId);
+        const icon  = document.getElementById(iconId);
+        if (field.type === 'password') {
+            field.type = 'text';
+            icon.src  = icon.src.replace('eye_closed','eye_open');
+        } else {
+            field.type = 'password';
+            icon.src  = icon.src.replace('eye_open','eye_closed');
+        }
+    }
 
 // *****************************************
 //       LÓGICA DE DESPLIEGUE DE NOTICIAS    

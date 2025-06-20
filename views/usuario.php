@@ -27,67 +27,35 @@ $usuario = $usuarioModel->obtenerUsuarioPorId($id_usuario);
     <script src="../assets/js/script.js" defer></script>
 </head>
 <body>
-   <!-- Barra superior -->
-   <header class="top-bar">
-        <!-- Botón de colapsar con iconos dinámicos -->
-        <button id="toggle-btn" class="toggle-sidebar-btn" onclick="toggleSidebar()">
-            <img id="collapse-icon" src="../assets/icons/menu_static.png" alt="Colapsar" class="toggle-icon sidebar-icon">
-        </button>
+    <!-- ╔═════════════════════════════════════════╗ -->
+    <!-- ║         Cabecera común                  ║ -->
+    <!-- ╚═════════════════════════════════════════╝ -->
+    <?php include __DIR__ . '/partials/header.php'; ?>
+    <?php include __DIR__ . '/partials/sidebar.php'; ?>
 
+   
 
-        <!-- Logo Gobierno de Canarias -->
-        <img src="../assets/img/logo_canarias.png" alt="Gobierno de Canarias" class="logo-canarias">
-        
-        <!-- Campo de búsqueda -->
-        <div class="search-container">
-            <input type="text" placeholder="Buscar..." class="search-bar">
-            <button class="search-btn">
-                <i class="fas fa-search">
-                <img src="../assets/icons/search_static.png" alt="Inicio" class="sidebar-icon">
-            </i></button>
-        </div>
-        
-        <!-- Icono de usuario -->
-        <div class="user-menu" onclick="toggleUserMenu(event)">
-            <img src="../assets/icons/user_static.png" alt="Usuario" class="user-icon">
-            <div class="dropdown-content" id="userDropdown">
-                <a href="usuario.php">Mi Perfil</a>
-                <a href="../controllers/logout.php">Cerrar Sesión</a>
-            </div>
-        </div>
-
-    </header>
-
-
-    <!-- Barra lateral -->
-    <nav class="sidebar" id="sidebar">
-        <div class="sidebar-content">
-            <a href="dashboard.php" class="nav-link <?php echo ($pagina_activa == 'dashboard') ? 'active' : ''; ?>">
-                <img src="../assets/icons/home_static.png" alt="Inicio" class="sidebar-icon"> <span>Inicio</span>
-            </a>
-            <a href="noticias.php" class="nav-link <?php echo ($pagina_activa == 'noticias') ? 'active' : ''; ?>">
-                <img src="../assets/icons/news_static.png" alt="Noticias" class="sidebar-icon"> <span>Noticias</span>
-            </a>
-            <a href="adjudicaciones.php" class="nav-link <?php echo ($pagina_activa == 'adjudicaciones') ? 'active' : ''; ?>">
-                <img src="../assets/icons/island_static.png" alt="Adjudicaciones" class="sidebar-icon"> <span>Adjudicaciones</span>
-            </a>
-            <a href="solicitudes.php" class="nav-link <?php echo ($pagina_activa == 'solicitudes') ? 'active' : ''; ?>">
-                <img src="../assets/icons/request_static.png" alt="Solicitudes" class="sidebar-icon"> <span>Solicitudes</span>
-            </a>
-            <a href="formacion.php" class="nav-link <?php echo ($pagina_activa == 'formacion') ? 'active' : ''; ?>">
-                <img src="../assets/icons/education_static.png" alt="Formación" class="sidebar-icon"> <span>Formación</span>
-            </a>
-        </div>
-    </nav>
-
-    <!-- Contenido -->
+    <!-- ╔═════════════════════════════════════════╗ -->
+    <!-- ║         Contenido.                      ║ -->
+    <!-- ╚═════════════════════════════════════════╝ -->
     <main class="content">
         <h2 class="page-title">Mi Perfil</h2>
-        
+        <!-- Mostrar mensaje de error si las contraseñas no coinciden -->
+        <?php if (isset($_GET['error']) && $_GET['error'] === 'pass_no_coincide'): ?>
+            <div class="alert alert-danger text-center mb-3">
+                Error: Las contraseñas no coinciden.
+            </div>
+        <?php endif; ?>
         <!--Formulario de perfil-->
         <div class="perfil-container">
             <form action="../controllers/UsuarioController.php" method="POST">
+                <!-- Indica al controlador que estamos editando -->
+                <input type="hidden" name="action" value="editar">
                 <input type="hidden" name="id_usuario" value="<?= $usuario['id_usuario'] ?>">
+                <input type="hidden" name="dni" value="<?= htmlspecialchars($usuario['dni']) ?>">
+                <input type="hidden" name="rol" value="<?= htmlspecialchars($usuario['rol']) ?>">
+                <input type="hidden" name="puntuacion" value="<?= htmlspecialchars($usuario['puntuacion']) ?>">
+
 
                 <label for="nombre">Nombre:</label>
                 <input type="text" name="nombre" class="form-control" value="<?= htmlspecialchars($usuario['nombre']) ?>" required>
@@ -119,25 +87,42 @@ $usuario = $usuarioModel->obtenerUsuarioPorId($id_usuario);
                     <option value="La Graciosa" <?= $usuario['isla'] === 'La Graciosa' ? 'selected' : '' ?>>La Graciosa</option>
                 </select>
 
-                <!-- Mostrar la contraseña actual en un campo solo de lectura con botón para mostrar/ocultar -->
-                <label for="password_actual">Contraseña Actual:</label>
-                <div class="password-container">
-                    <input type="password" id="password_actual" class="form-control" value="<?= htmlspecialchars($usuario['password']) ?>" disabled>
-                    <button type="button" class="toggle-password" onclick="togglePassword('password_actual', 'eye-icon-actual')">
-                        <img src="../assets/icons/eye_closed.png" alt="Mostrar" id="eye-icon-actual">
-                    </button>
-                </div>
 
                 <!-- Input para ingresar una nueva contraseña (opcional) -->
                 <label for="password">Nueva Contraseña (Opcional):</label>
-                <div class="password-container">
-                    <input type="password" name="password" id="password" class="form-control">
-                    <button type="button" class="toggle-password" onclick="togglePassword('password', 'eye-icon')">
-                        <img src="../assets/icons/eye_closed.png" alt="Mostrar" id="eye-icon">
+                <div class="password-container mb-3 d-flex align-items-center">
+                    <input type="password"
+                        name="password"
+                        id="password"
+                        class="form-control"
+                        autocomplete="new-password">
+                    <button type="button"
+                            class="btn btn-light border toggle-password-btn ms-2"
+                            onclick="togglePassword('password','eye-icon-new')">
+                        <img src="../assets/icons/eye_closed.png"
+                            alt="Mostrar/Ocultar"
+                            id="eye-icon-new"
+                            width="20" height="20"
+                            autocomplete="new-password">
                     </button>
                 </div>
 
-
+                <!-- Confirmar nueva contraseña -->
+                <label for="password_confirm">Confirmar Contraseña:</label>
+                <div class="password-container mb-4 d-flex align-items-center">
+                    <input type="password"
+                        name="password_confirm"
+                        id="password_confirm"
+                        class="form-control">
+                    <button type="button"
+                            class="btn btn-light border toggle-password-btn ms-2"
+                            onclick="togglePassword('password_confirm','eye-icon-confirm')">
+                        <img src="../assets/icons/eye_closed.png"
+                            alt="Mostrar/Ocultar"
+                            id="eye-icon-confirm"
+                            width="20" height="20">
+                    </button>
+                </div>
 
                 <label for="puntuacion">Puntuación:</label>
                 <input type="text" class="form-control" value="<?= htmlspecialchars($usuario['puntuacion']) ?>" disabled>
@@ -146,6 +131,9 @@ $usuario = $usuarioModel->obtenerUsuarioPorId($id_usuario);
             </form>
         </div>
     </main>
-
+    <!-- ╔═════════════════════════════════════════╗ -->
+    <!-- ║         Pie de página                   ║ -->
+    <!-- ╚═════════════════════════════════════════╝ -->
+    <?php include __DIR__ . '/partials/footer.php'; ?>
 </body>
 </html>
