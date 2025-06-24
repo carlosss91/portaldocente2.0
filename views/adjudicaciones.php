@@ -86,31 +86,59 @@ $pagina_activa = basename($_SERVER['PHP_SELF'], ".php");
     </form>
 </div>
 
-    <!-- TABLA -->
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Isla</th>
-                    <th>Municipio</th>
-                    <th>Fecha</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($adjudicaciones as $adj): ?>
-                <tr data-id="<?= $adj['id_adjudicacion'] ?>">
-                    <td><?= htmlspecialchars($adj["isla"] ?? 'No disponible') ?></td>
-                    <td><?= htmlspecialchars($adj["municipio"] ?? 'No disponible') ?></td>
-                    <td><?= htmlspecialchars($adj["fecha_adjudicacion"] ?? 'No disponible') ?></td>
-                    <td>
-                        <button class="btn btn-light border" onclick="eliminarAdjudicacion(this)" title="Eliminar">
-                            <img src="../assets/icons/eliminar.png" alt="Eliminar" width="20">
-                        </button>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </main>   
+<!-- TABLA -->
+<table class="table">
+    <thead>
+        <tr>
+            <!-- Columna de número de orden con botón de ordenación -->
+            <th>
+                Nº
+                <button type="button" class="btn btn-link p-0 sort-btn" data-sort="orden" title="Ordenar">&#8597;</button>
+            </th>
+            <!-- Columna Isla con botón de ordenación -->
+            <th>
+                Isla
+                <button type="button" class="btn btn-link p-0 sort-btn" data-sort="isla" title="Ordenar">&#8597;</button>
+            </th>
+            <!-- Columna Municipio con botón de ordenación -->
+            <th>
+                Municipio
+                <button type="button" class="btn btn-link p-0 sort-btn" data-sort="municipio" title="Ordenar">&#8597;</button>
+            </th>
+            <!-- Columna Fecha con botón de ordenación -->
+            <th>
+                Fecha
+                <button type="button" class="btn btn-link p-0 sort-btn" data-sort="fecha" title="Ordenar">&#8597;</button>
+            </th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody id="adjudicaciones-tbody">
+        <?php 
+        // Invertir el array para mostrar la más reciente primero
+        $adjudicaciones = array_reverse($adjudicaciones);
+        // Mostramos la más reciente primero (orden descendente)
+        $orden = count($adjudicaciones);
+        foreach ($adjudicaciones as $adj): ?>
+        <tr data-id="<?= $adj['id_adjudicacion'] ?>">
+            <!-- Número de orden -->
+            <td><?= $orden-- ?></td>
+            <!-- Isla -->
+            <td><?= htmlspecialchars($adj["isla"] ?? 'No disponible') ?></td>
+            <!-- Municipio -->
+            <td><?= htmlspecialchars($adj["municipio"] ?? 'No disponible') ?></td>
+            <!-- Fecha -->
+            <td><?= htmlspecialchars($adj["fecha_adjudicacion"] ?? 'No disponible') ?></td>
+            <!-- Botón de eliminar -->
+            <td>
+                <button class="btn btn-light border" onclick="eliminarAdjudicacion(this)" title="Eliminar">
+                    <img src="../assets/icons/eliminar.png" alt="Eliminar" width="20">
+                </button>
+            </td>
+        </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>  
 
     <!-- Pie de página -->
     <?php include 'partials/footer.php'; ?>

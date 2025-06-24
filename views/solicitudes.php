@@ -63,32 +63,66 @@ if (!is_array($solicitudes)) {
             </form>
         </div>
 
-        <!-- Tabla de solicitudes -->
-        <table class="table">
-    <thead>
-        <tr>
-            <th>Tipo</th>
-            <th>Estado</th>
-            <th>Detalles</th>
-            <th>Fecha</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php foreach ($solicitudes as $solicitud): ?>
-        <tr data-id="<?= $solicitud['id_solicitud'] ?>">
-            <td><?= htmlspecialchars($solicitud["tipo_solicitud"] ?? 'No disponible') ?></td>
-            <td><?= htmlspecialchars($solicitud["estado_solicitud"] ?? 'No disponible') ?></td>
-            <td><?= htmlspecialchars($solicitud["detalles_destino_solicitado"] ?? 'No disponible') ?></td>
-            <td><?= htmlspecialchars($solicitud["fecha_solicitud"] ?? 'No disponible') ?></td>
-            <td>
-                <button class="btn btn-light border" onclick="eliminarSolicitud(this)" title="Eliminar">
-                    <img src="../assets/icons/eliminar.png" alt="Eliminar" width="20">
-                </button>
-            </td>
-        </tr>
-        <?php endforeach; ?>
-    </tbody>
-</table>
+    <!-- Tabla de solicitudes -->
+    <table class="table">
+        <thead>
+            <tr>
+                <!-- Columna de número de orden con botón de ordenación -->
+                <th style="width:1%; white-space:nowrap;">
+                    Nº
+                    <button type="button" class="btn btn-link p-0 sort-btn" data-sort="orden" title="Ordenar">&#8597;</button>
+                </th>
+                <!-- Columna Tipo con botón de ordenación -->
+                <th>
+                    Tipo
+                    <button type="button" class="btn btn-link p-0 sort-btn" data-sort="tipo" title="Ordenar">&#8597;</button>
+                </th>
+                <!-- Columna Estado con botón de ordenación -->
+                <th>
+                    Estado
+                    <button type="button" class="btn btn-link p-0 sort-btn" data-sort="estado" title="Ordenar">&#8597;</button>
+                </th>
+                <!-- Columna Detalles con botón de ordenación -->
+                <th>
+                    Detalles
+                    <button type="button" class="btn btn-link p-0 sort-btn" data-sort="detalles" title="Ordenar">&#8597;</button>
+                </th>
+                <!-- Columna Fecha con botón de ordenación -->
+                <th>
+                    Fecha
+                    <button type="button" class="btn btn-link p-0 sort-btn" data-sort="fecha" title="Ordenar">&#8597;</button>
+                </th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="solicitudes-tbody">
+            <?php 
+            // Invertir el array para mostrar la más reciente primero
+            $solicitudes = array_reverse($solicitudes);
+            // Mostramos la más reciente primero (orden descendente)
+            $orden = count($solicitudes);
+            foreach ($solicitudes as $solicitud): ?>
+            <tr data-id="<?= $solicitud['id_solicitud'] ?>">
+                <!-- Número de orden -->
+                <td><?= $orden-- ?></td>
+                <!-- Tipo -->
+                <td><?= htmlspecialchars($solicitud["tipo_solicitud"] ?? 'No disponible') ?></td>
+                <!-- Estado -->
+                <td><?= htmlspecialchars($solicitud["estado_solicitud"] ?? 'No disponible') ?></td>
+                <!-- Detalles -->
+                <td><?= htmlspecialchars($solicitud["detalles_destino_solicitado"] ?? 'No disponible') ?></td>
+                <!-- Fecha -->
+                <td><?= htmlspecialchars($solicitud["fecha_solicitud"] ?? 'No disponible') ?></td>
+                <!-- Botón de eliminar -->
+                <td>
+                    <button class="btn btn-light border" onclick="eliminarSolicitud(this)" title="Eliminar">
+                        <img src="../assets/icons/eliminar.png" alt="Eliminar" width="20">
+                    </button>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
     </main>
       <!-- Pie de página -->
     <?php include 'partials/footer.php'; ?>

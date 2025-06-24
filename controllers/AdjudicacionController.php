@@ -25,13 +25,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     
     // Verificar si se ha enviado una solicitud para eliminar una adjudicación
-    if (isset($_POST["eliminar_adjudicacion"])) {
-        $id_adjudicacion = $_POST["eliminar_adjudicacion"];
-
-        if (!empty($id_adjudicacion)) {
-            $adjudicacion->eliminarAdjudicacion($id_adjudicacion);
-        }
+if (isset($_POST["accion"]) && $_POST["accion"] === "eliminar" && isset($_POST["id_adjudicacion"])) {
+    $id_adjudicacion = $_POST["id_adjudicacion"];
+    if (!empty($id_adjudicacion)) {
+        $adjudicacion->eliminarAdjudicacion($id_adjudicacion);
     }
+}
     
     header("Location: ../views/adjudicaciones.php?success=1");
     exit();

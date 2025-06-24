@@ -107,11 +107,16 @@ function setupSearch() {
 // *****************************************
 //     LÓGICA FORMULARIO ADJUDICACIONES      
 // *****************************************
-
+ //MUNICIPIOS POR ISLA
 const municipiosPorIsla = {
-  "Tenerife": ["Adeje", "Arafo", /* ... */ "Vilaflor de Chasna"],
-  "Gran Canaria": ["Agaete", "Agüimes", /* ... */ "Vega de San Mateo"],
-  // ... otras islas
+    "Tenerife": ["Adeje", "Arafo", "Arico", "Arona", "Buenavista del Norte", "Candelaria", "El Rosario", "El Sauzal", "El Tanque", "Fasnia", "Garachico", "Granadilla de Abona", "Guía de Isora", "Güímar", "Icod de los Vinos", "La Guancha", "La Matanza de Acentejo", "La Orotava", "La Victoria de Acentejo", "Los Realejos", "Puerto de la Cruz", "San Cristóbal de La Laguna", "San Juan de la Rambla", "San Miguel de Abona", "Santa Cruz de Tenerife", "Santa Úrsula", "Santiago del Teide", "Tacoronte", "Tegueste", "Vilaflor de Chasna"],
+    "Gran Canaria": ["Agaete", "Agüimes", "Artenara", "Arucas", "Firgas", "Gáldar", "Ingenio", "La Aldea de San Nicolás", "Las Palmas de Gran Canaria", "Mogán", "Moya", "San Bartolomé de Tirajana", "Santa Brígida", "Santa Lucía de Tirajana", "Santa María de Guía", "Tejeda", "Telde", "Teror", "Valleseco", "Valsequillo de Gran Canaria", "Vega de San Mateo"],
+    "Lanzarote": ["Arrecife", "Haría", "San Bartolomé", "Teguise", "Tías", "Tinajo", "Yaiza"],
+    "Fuerteventura": ["Antigua", "Betancuria", "La Oliva", "Pájara", "Puerto del Rosario", "Tuineje"],
+    "La Palma": ["Barlovento", "Breña Alta", "Breña Baja", "Fuencaliente", "Garafía", "Los Llanos de Aridane", "El Paso", "Puntagorda", "Puntallana", "San Andrés y Sauces", "Santa Cruz de La Palma", "Tazacorte", "Tijarafe", "Villa de Mazo"],
+    "La Gomera": ["Agulo", "Alajeró", "Hermigua", "San Sebastián de La Gomera", "Valle Gran Rey", "Vallehermoso"],
+    "El Hierro": ["Frontera", "El Pinar de El Hierro", "Valverde"],
+    "La Graciosa": ["Caleta de Sebo"]
 };
 
 // Actualiza la lista de municipios según la isla seleccionada
@@ -139,10 +144,63 @@ function eliminarAdjudicacion(btn) {
   const f  = document.createElement("form");
   f.method = "POST";
   f.action = "../controllers/AdjudicacionController.php";
-  f.innerHTML = `<input type="hidden" name="id_adjudicacion" value="${id}">`;
+  f.innerHTML = `
+    <input type="hidden" name="id_adjudicacion" value="${id}">
+    <input type="hidden" name="accion" value="eliminar">
+  `;
   document.body.appendChild(f);
   f.submit();
 }
+document.addEventListener("DOMContentLoaded", function() {
+  const tbody = document.getElementById("adjudicaciones-tbody");
+  if (!tbody) return;
+
+  // Devuelve el valor de la celda en la columna idx
+  const getCellValue = (tr, idx) => tr.children[idx].textContent.trim();
+
+  // Guarda el sentido de orden para cada columna
+  let sortDirection = {};
+
+  // Asocia evento a cada botón de ordenación
+  document.querySelectorAll(".sort-btn").forEach(btn => {
+    btn.addEventListener("click", function() {
+      const sortKey = btn.dataset.sort;
+      let idx;
+      if (sortKey === "orden") idx = 0;
+      else if (sortKey === "isla") idx = 1;
+      else if (sortKey === "municipio") idx = 2;
+      else if (sortKey === "fecha") idx = 3;
+
+      const rows = Array.from(tbody.querySelectorAll("tr"));
+      sortDirection[sortKey] = !sortDirection[sortKey]; // Alterna asc/desc
+
+      rows.sort((a, b) => {
+        let valA = getCellValue(a, idx);
+        let valB = getCellValue(b, idx);
+
+        if (sortKey === "orden") {
+          // Ordenar por número (descendente por defecto)
+          return sortDirection[sortKey]
+            ? Number(valA) - Number(valB)
+            : Number(valB) - Number(valA);
+        } else if (sortKey === "fecha") {
+          // Ordenar por fecha (más reciente primero)
+          return sortDirection[sortKey]
+            ? valA.localeCompare(valB)
+            : valB.localeCompare(valA);
+        } else {
+          // Ordenar alfabéticamente
+          return sortDirection[sortKey]
+            ? valA.localeCompare(valB)
+            : valB.localeCompare(valA);
+        }
+      });
+
+      // Vuelve a añadir las filas ordenadas al tbody
+      rows.forEach(tr => tbody.appendChild(tr));
+    });
+  });
+});
 
 
 // *****************************************
@@ -162,7 +220,10 @@ function eliminarSolicitud(btn) {
   const f  = document.createElement("form");
   f.method = "POST";
   f.action = "../controllers/SolicitudController.php";
-  f.innerHTML = `<input type="hidden" name="id_solicitud" value="${id}">`;
+  f.innerHTML = `
+    <input type="hidden" name="id_solicitud" value="${id}">
+    <input type="hidden" name="accion" value="eliminar">
+  `;
   document.body.appendChild(f);
   f.submit();
 }

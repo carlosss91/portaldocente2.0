@@ -105,19 +105,27 @@ class Usuario {
     // ╔═════════════════════════════════════════╗
     // ║   CALCULAR PUESTO EN LISTA             ║
     // ╚═════════════════════════════════════════╝
+    // Calcular el puesto en cada isla
     public function obtenerPuestoEnLista($id_usuario) {
         $sql = "SELECT id_usuario FROM usuario ORDER BY puntuacion DESC";
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
-        $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $usuarios = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-        foreach ($usuarios as $index => $usuario) {
-            if ($usuario['id_usuario'] == $id_usuario) {
-                return $index + 1;
-            }
-        }
-        return 'No encontrado';
+        $puesto = array_search($id_usuario, $usuarios);
+        return ($puesto !== false) ? $puesto + 1 : 'No encontrado';
     }
+    // ╔═════════════════════════════════════════╗
+    // ║   OBTENER PUESTO EN ISLA                ║
+    // ╚═════════════════════════════════════════╝
+    public function obtenerPuestoEnIsla($id_usuario, $isla) {
+    $sql = "SELECT id_usuario FROM usuario WHERE isla = ? AND disponibilidad = 1 ORDER BY puntuacion DESC, id_usuario ASC";
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute([$isla]);
+    $usuarios = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    $puesto = array_search($id_usuario, $usuarios);
+    return ($puesto !== false) ? $puesto + 1 : '-';
+}
 
     // ╔═════════════════════════════════════════╗
     // ║   ACTUALIZAR USUARIO                   ║

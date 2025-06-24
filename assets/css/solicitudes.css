@@ -11,6 +11,12 @@
     text-align: center;
     width: 25%; /* Asegurar que todas las columnas tengan el mismo tamaño */
 }
+.table th:first-child,
+.table td:first-child {
+    width: 1%;
+    white-space: nowrap;
+    text-align: center;
+}
 
 /* Estilos para el formulario de solicitud */
 #formularioSolicitud {

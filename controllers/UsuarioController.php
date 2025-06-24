@@ -6,6 +6,10 @@ session_start();
 require_once '../models/Usuario.php';
 require_once '../models/Adjudicacion.php';
 
+if (!isset($_SESSION['id_usuario'])) {
+    header("Location: ../views/login.php");
+    exit();
+}
 // ╔═════════════════════════════════════════╗
 // ║       DEFINICIÓN DEL CONTROLADOR       ║
 // ╚═════════════════════════════════════════╝
@@ -85,6 +89,19 @@ class UsuarioController {
 $usuarioController = new UsuarioController();
 
 // ╔═════════════════════════════════════════╗
+// ║   OBTENER USUARIO Y PUESTOS POR ISLA   ║
+// ╚═════════════════════════════════════════╝
+$id_usuario = $_SESSION['id_usuario'];
+$usuario = $usuarioController->getUsuarioModel()->obtenerUsuarioPorId($id_usuario);
+
+// Definir las islas
+$islas = ["Tenerife", "Gran Canaria", "Lanzarote", "Fuerteventura", "La Palma", "La Gomera", "El Hierro", "La Graciosa"];
+$puestos_por_isla = [];
+foreach ($islas as $isla) {
+    $puestos_por_isla[$isla] = $usuarioController->getUsuarioModel()->obtenerPuestoEnIsla($usuario['id_usuario'], $isla);
+}
+
+// ╔═════════════════════════════════════════╗
 // ║     MANEJO DE PETICIONES POST          ║
 // ╚═════════════════════════════════════════╝
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -140,66 +157,65 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
     }
 
-// ╔════════════════════════════╗
-// ║   ACCIÓN: EDITAR USUARIO   ║
-// ╚════════════════════════════╝
-if ($action === "editar") {
-    // DEBUG: Para ver qué campos llegan
-    error_log("POST en editar: ".print_r($_POST, true));
-    try {
-        // Recoger campos
-        $id_usuario     = intval($_POST["id_usuario"]);
-        $nombre         = trim($_POST["nombre"]);
-        $apellido       = trim($_POST["apellido"]);
-        $dni            = trim($_POST["dni"]);
-        $email          = trim($_POST["email"]);
-        $telefono       = trim($_POST["telefono"] ?? '');
-        $rol            = trim($_POST["rol"]);
-        $disponibilidad = intval($_POST["disponibilidad"] ?? 1);
-        $isla           = trim($_POST["isla"] ?? '');
-        $puntuacion     = floatval($_POST["puntuacion"] ?? 0);
+    // ╔════════════════════════════╗
+    // ║   ACCIÓN: EDITAR USUARIO   ║
+    // ╚════════════════════════════╝
+    if ($action === "editar") {
+        // DEBUG: Para ver qué campos llegan
+        error_log("POST en editar: ".print_r($_POST, true));
+        try {
+            // Recoger campos
+            $id_usuario     = intval($_POST["id_usuario"]);
+            $nombre         = trim($_POST["nombre"]);
+            $apellido       = trim($_POST["apellido"]);
+            $dni            = trim($_POST["dni"]);
+            $email          = trim($_POST["email"]);
+            $telefono       = trim($_POST["telefono"] ?? '');
+            $rol            = trim($_POST["rol"]);
+            $disponibilidad = intval($_POST["disponibilidad"] ?? 1);
+            $isla           = trim($_POST["isla"] ?? '');
+            $puntuacion     = floatval($_POST["puntuacion"] ?? 0);
 
-        // NUEVO: manejo de cambio de contraseña
-        $passNueva    = trim($_POST["password"] ?? '');
-        $passConfirm  = trim($_POST["password_confirm"] ?? '');
-        if ($passNueva !== '' || $passConfirm !== '') {
-            if ($passNueva !== $passConfirm) {
-                header("Location: ../views/usuario.php?error=pass_no_coincide");
+            // NUEVO: manejo de cambio de contraseña
+            $passNueva    = trim($_POST["password"] ?? '');
+            $passConfirm  = trim($_POST["password_confirm"] ?? '');
+            if ($passNueva !== '' || $passConfirm !== '') {
+                if ($passNueva !== $passConfirm) {
+                    header("Location: ../views/usuario.php?error=pass_no_coincide");
+                    exit();
+                }
+                // Si coinciden, dejamos $password con el texto (el modelo hará el hash)
+                $password = $passNueva;
+            } else {
+                // No cambiar la clave
+                $password = null;
+            }
+
+            // Llamada al modelo con el parámetro $password (raw si hay, o null)
+            $usuarioController->actualizarUsuario(
+                $id_usuario,
+                $nombre,
+                $apellido,
+                $dni,
+                $email,
+                $telefono,
+                $rol,
+                $disponibilidad,
+                $isla,
+                $puntuacion,
+                $password
+            );
+            header("Location: ../views/usuario.php?success=perfil_actualizado");
+            exit();
+        } catch (PDOException $e) {
+            // Manejo de duplicados, etc.
+            if ($e->getCode() === '23000') {
+                header("Location: ../views/usuario.php?error=datos_duplicados");
                 exit();
             }
-            // Si coinciden, dejamos $password con el texto (el modelo hará el hash)
-            $password = $passNueva;
-        } else {
-            // No cambiar la clave
-            $password = null;
+            throw $e;
         }
-
-        // Llamada al modelo con el parámetro $password (raw si hay, o null)
-        $usuarioController->actualizarUsuario(
-            $id_usuario,
-            $nombre,
-            $apellido,
-            $dni,
-            $email,
-            $telefono,
-            $rol,
-            $disponibilidad,
-            $isla,
-            $puntuacion,
-            $password
-        );
-        header("Location: ../views/usuario.php?success=perfil_actualizado");
-        exit();
-    } catch (PDOException $e) {
-        // Manejo de duplicados, etc.
-        if ($e->getCode() === '23000') {
-            header("Location: ../views/usuario.php?error=datos_duplicados");
-            exit();
-        }
-        throw $e;
     }
-}
-
 
     // ╔════════════════════════════╗
     // ║   ACCIÓN: DESCONOCIDA      ║

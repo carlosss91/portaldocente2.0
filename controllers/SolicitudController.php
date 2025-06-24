@@ -25,15 +25,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
     
-    // Verificar si se ha enviado una solicitud para eliminar una solicitud existente
-    if (isset($_POST["eliminar_solicitud"])) {
-        $id_solicitud = $_POST["eliminar_solicitud"];
-
-        // Solo eliminar si el ID es válido
-        if (!empty($id_solicitud)) {
-            $solicitud->eliminarSolicitud($id_solicitud);
-        }
+// Verificar si se ha enviado una solicitud para eliminar una solicitud existente
+if (isset($_POST["accion"]) && $_POST["accion"] === "eliminar" && isset($_POST["id_solicitud"])) {
+    $id_solicitud = $_POST["id_solicitud"];
+    // Solo eliminar si el ID es válido
+    if (!empty($id_solicitud)) {
+        $solicitud->eliminarSolicitud($id_solicitud);
     }
+}
     
     header("Location: ../views/solicitudes.php?success=1"); // Redirigir tras completar la acción
     exit();
